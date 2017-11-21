@@ -22,6 +22,7 @@ YOUTUBE_API_SERVICE_NAME = "youtube"
 YOUTUBE_API_VERSION = "v3"
 
 # Джугл апи норм завелся, в принципе работает поиск видосиков. пока что меня все устраивает.
+# TODO:: insert name file in tmpl for youtube_dl, swap all spacebars on _ and remove all special symbols.
 def chose_video_for_download(videos):
     videos_count = len(videos)
     print('chose video for download\nwrite a number 0 of', videos_count - 1)
@@ -30,8 +31,9 @@ def chose_video_for_download(videos):
     t1 = n[0].replace('(','').replace(')','')
     path_to_file = videos[int(number)].replace(t1,'')
     uri = 'https://www.youtube.com/watch?v=' + t1
-    if(download_youtube(uri)):
-        convert_flv(path_to_file)
+    title = download_youtube(uri)
+    print(title)
+    convert_flv(title)
 
 def youtube_search(kw):
     print(kw)
@@ -64,7 +66,7 @@ def youtube_search(kw):
 def download_youtube(uri):
     ydl_opts = {
         'format': 'bestaudio/best',
-        'outtmpl': '1.%(ext)s',
+        'outtmpl': '%(title)s.%(ext)s',
         'postprocessor': [{
             'key': 'FFmpegExtracrtAudio',
             'preferredcodec': 'flv',
@@ -72,12 +74,12 @@ def download_youtube(uri):
          }],
     }
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-        data = ydl.download([uri])
-    return True
+        data = ydl.extract_info(uri)
+    return data.pop('title')
 
 def convert_flv(name):
-    args = '-i 1.webm -acodec libmp3lame -aq 4 1.mp3'
+    args = '-i /home/server/music_kek/'+name+'.webm -acodec libmp3lame -aq 4 /home/server/music_kek/1.mp3'
     print(args)
-    subprocess.run(['/usr/share/ffmpeg',args])
+    subprocess.run(['/usr/bin/ffmpeg', args])
 
-youtube_search('oxxxymiron')
+youtube_search('system of a down chop say')
