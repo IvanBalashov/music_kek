@@ -1,6 +1,7 @@
 import urllib.request as url
 import youtube_dl
 import re
+import subprocess
 # В общем, надо хоть мысли записать. Музыку искать буду в VK, SoundCloud, Youtube, мб Yandex.Music.
 # Пока что как все я это вижу. Будет бот + веб морда(возможно) куда нужно будет писать название песни, 
 # пихон ее будет удачно находить, заливать в телегу, и делиться с юзерами.
@@ -10,7 +11,13 @@ import re
 from apiclient.discovery import build
 from apiclient.errors import HttpError
 
-DEVELOPER_KEY = ""
+def read_api_key(path):
+    full_path = '/home/server/music_kek/' + path
+    f = open(full_path, 'r+')
+    data = f.read()
+    return data
+
+DEVELOPER_KEY = read_api_key('api_key')
 YOUTUBE_API_SERVICE_NAME = "youtube"
 YOUTUBE_API_VERSION = "v3"
 
@@ -21,8 +28,10 @@ def chose_video_for_download(videos):
     number = input()
     n = re.findall('[a-zA-Z0-9-_()]{13}$', videos[int(number)])
     t1 = n[0].replace('(','').replace(')','')
+    path_to_file = videos[int(number)].replace(t1,'')
     uri = 'https://www.youtube.com/watch?v=' + t1
-    download_youtube(uri)
+    if(download_youtube(uri)):
+        convert_flv(path_to_file)
 
 def youtube_search(kw):
     print(kw)
@@ -55,7 +64,7 @@ def youtube_search(kw):
 def download_youtube(uri):
     ydl_opts = {
         'format': 'bestaudio/best',
-        'outtmpl': '%(title)s.%(ext)s',
+        'outtmpl': '1.%(ext)s',
         'postprocessor': [{
             'key': 'FFmpegExtracrtAudio',
             'preferredcodec': 'flv',
@@ -64,10 +73,11 @@ def download_youtube(uri):
     }
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
         data = ydl.download([uri])
-    print(data)
+    return True
 
-#def convert_flv(name):
-#    args = '-i' + name + '-acodec libmp3lame -aq 4 1.mp3' 
-#    subprocess.run(['ffmpeg',args])
+def convert_flv(name):
+    args = '-i 1.webm -acodec libmp3lame -aq 4 1.mp3'
+    print(args)
+    subprocess.run(['/usr/share/ffmpeg',args])
 
-youtube_search('radio tapok')
+youtube_search('oxxxymiron')
