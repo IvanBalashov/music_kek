@@ -54,13 +54,13 @@ def youtube_search(kw):
 
 def download_youtube(uri):
     ydl_opts = {
-        # 'format': 'bestaudio/best',
-        # 'outtmpl': '%(title)s.%(ext)s',
-        # 'postprocessor': [{
-        #     'key': 'FFmpegExtracrtAudio',
-        #     'preferredcodec': 'flv',
-        #     'preferredquality':'196',
-        # }],
+        'format': 'bestaudio/best',
+        'outtmpl': '%(title)s.%(ext)s',
+        'postprocessor': [{
+            'key': 'FFmpegExtracrtAudio',
+            'preferredcodec': 'flv',
+            'preferredquality':'256',
+         }],
     }
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
         data = ydl.download([uri])
