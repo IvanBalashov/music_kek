@@ -10,7 +10,7 @@ import re
 from apiclient.discovery import build
 from apiclient.errors import HttpError
 
-DEVELOPER_KEY = "AIzaSyDPLD4XWLtEsr9RVsEOsWvQe_Idlw6Vbf4"
+DEVELOPER_KEY = ""
 YOUTUBE_API_SERVICE_NAME = "youtube"
 YOUTUBE_API_VERSION = "v3"
 
@@ -64,5 +64,10 @@ def download_youtube(uri):
     }
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
         data = ydl.download([uri])
+    print(data)
+
+#def convert_flv(name):
+#    args = '-i' + name + '-acodec libmp3lame -aq 4 1.mp3' 
+#    subprocess.run(['ffmpeg',args])
 
 youtube_search('radio tapok')
