@@ -2,6 +2,7 @@ import urllib.request as url
 import youtube_dl
 import re
 import subprocess
+import os
 # В общем, надо хоть мысли записать. Музыку искать буду в VK, SoundCloud, Youtube, мб Yandex.Music.
 # Пока что как все я это вижу. Будет бот + веб морда(возможно) куда нужно будет писать название песни, 
 # пихон ее будет удачно находить, заливать в телегу, и делиться с юзерами.
@@ -12,7 +13,7 @@ from apiclient.discovery import build
 from apiclient.errors import HttpError
 
 def read_api_key(path):
-    full_path = '/home/server/music_kek/' + path
+    full_path = os.getcwd()+'/'+ path
     f = open(full_path, 'r+')
     data = f.read()
     return data
@@ -28,12 +29,12 @@ def chose_video_for_download(videos):
     print('chose video for download\nwrite a number 0 of', videos_count - 1)
     number = input()
     n = re.findall('[a-zA-Z0-9-_()]{13}$', videos[int(number)])
+    newtitile = videos[int(number)].replace(' ','_').replace('!','')
     t1 = n[0].replace('(','').replace(')','')
-    path_to_file = videos[int(number)].replace(t1,'')
     uri = 'https://www.youtube.com/watch?v=' + t1
-    title = download_youtube(uri)
+    title = download_youtube(uri, newtitile)
     print(title)
-    convert_flv(title)
+#    convert_flv(t1)
 
 def youtube_search(kw):
     print(kw)
@@ -63,10 +64,11 @@ def youtube_search(kw):
         print(chan.encode('utf-8'))
     chose_video_for_download(videos)
 
-def download_youtube(uri):
+def download_youtube(uri, name):
+    print(name, uri)
     ydl_opts = {
         'format': 'bestaudio/best',
-        'outtmpl': '%(title)s.%(ext)s',
+        'outtmpl': name+'.%(ext)s',
         'postprocessor': [{
             'key': 'FFmpegExtracrtAudio',
             'preferredcodec': 'flv',
@@ -78,8 +80,8 @@ def download_youtube(uri):
     return data.pop('title')
 
 def convert_flv(name):
-    args = '-i /home/server/music_kek/'+name+'.webm -acodec libmp3lame -aq 4 /home/server/music_kek/1.mp3'
+    args = '-i ' + os.getcwd() + '/' + name + '.webm -acodec libmp3lame -aq 4 '+ os.getcwd() + '/'+ name+'.mp3'
     print(args)
-    subprocess.run(['/usr/bin/ffmpeg', args])
+    subprocess.run(['/usr/local/bin/ffmpeg', args])
 
 youtube_search('system of a down chop say')
