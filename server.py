@@ -29,12 +29,12 @@ def chose_video_for_download(videos):
     print('chose video for download\nwrite a number 0 of', videos_count - 1)
     number = input()
     n = re.findall('[a-zA-Z0-9-_()]{13}$', videos[int(number)])
-    newtitile = videos[int(number)].replace(' ','_').replace('!','')
+    newtitle = videos[int(number)].replace(' ','_').replace('!','').replace("(","").replace(")","")
     t1 = n[0].replace('(','').replace(')','')
     uri = 'https://www.youtube.com/watch?v=' + t1
-    title = download_youtube(uri, newtitile)
-    print(title)
-#    convert_flv(t1)
+    title = download_youtube(uri, newtitle)
+    print(newtitle)
+    convert_flv(newtitle)
 
 def youtube_search(kw):
     print(kw)
@@ -68,7 +68,7 @@ def download_youtube(uri, name):
     print(name, uri)
     ydl_opts = {
         'format': 'bestaudio/best',
-        'outtmpl': name+'.%(ext)s',
+        'outtmpl': name + '.%(ext)s',
         'postprocessor': [{
             'key': 'FFmpegExtracrtAudio',
             'preferredcodec': 'flv',
@@ -80,8 +80,10 @@ def download_youtube(uri, name):
     return data.pop('title')
 
 def convert_flv(name):
-    args = '-i ' + os.getcwd() + '/' + name + '.webm -acodec libmp3lame -aq 4 '+ os.getcwd() + '/'+ name+'.mp3'
-    print(args)
-    subprocess.run(['/usr/local/bin/ffmpeg', args])
+    fileA =  os.getcwd() + "/" + name + ".webm"
+    codec = "libmp3lame"
+    fileB =  os.getcwd() + "/" + name + ".mp3"
+    subprocess.run(['/usr/bin/ffmpeg',"-i", fileA, "-acodec", codec,"-aq","4", fileB])
+    subprocess.run(['cp','-r',fileB,'/mnt/d/dev/'])
 
-youtube_search('system of a down chop say')
+youtube_search('limp bizkit')
