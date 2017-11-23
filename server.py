@@ -86,7 +86,7 @@ def convert_flv(name):
     fileB =  os.getcwd() + "/" + name + ".mp3"
     # for FreeBSD absolute path to ffmpeg - /usr/local/bin/ffmpeg , for linux - /usr/bin/ffmpeg
     print('start encode')
-    subprocess.run(["/usr/local/bin/ffmpeg"," -i", fileA, "-acodec", "libmp3lame", "-aq", "4", fileB], stdout='/dev/null')
+    subprocess.run(["/usr/local/bin/ffmpeg"," -i", fileA, "-acodec", "libmp3lame", "-aq", "4", fileB], stdout=FNULL)
     print('end encode')
    # subprocess.run(['cp','-r',fileB,'/mnt/d/dev/'])
 
