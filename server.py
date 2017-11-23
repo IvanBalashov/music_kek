@@ -75,15 +75,19 @@ def download_youtube(uri, name):
             'preferredquality':'256',
          }],
     }
+    print('started download')
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
         data = ydl.extract_info(uri)
+    print('video downloaded')
     return data.pop('title')
 
 def convert_flv(name):
     fileA =  os.getcwd() + "/" + name + ".webm"
     fileB =  os.getcwd() + "/" + name + ".mp3"
     # for FreeBSD absolute path to ffmpeg - /usr/local/bin/ffmpeg , for linux - /usr/bin/ffmpeg
-    subprocess.run(["/usr/local/bin/ffmpeg"," -i", fileA, "-acodec", "libmp3lame", "-aq", "4", fileB])
+    print('start encode')
+    subprocess.run(["/usr/local/bin/ffmpeg"," -i", fileA, "-acodec", "libmp3lame", "-aq", "4", fileB], stdout='/dev/null')
+    print('end encode')
    # subprocess.run(['cp','-r',fileB,'/mnt/d/dev/'])
 
 youtube_search('limp bizkit')
