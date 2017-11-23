@@ -29,8 +29,8 @@ def chose_video_for_download(videos):
     print('chose video for download\nwrite a number 0 of', videos_count - 1)
     number = input()
     name = re.findall('[a-zA-Z0-9-_()]{13}$', videos[int(number)])
-    newtitle = videos[int(number)].replace(' ','_').replace('!','').replace("(","").replace(")","")
     video_id = name[0].replace('(','').replace(')','')
+    newtitle = videos[int(number)].replace(' ','_').replace('!','').replace("(","").replace(")","").replace("_"+video_id,"")
     uri = 'https://www.youtube.com/watch?v=' + video_id
     title = download_youtube(uri, newtitle)
     convert_flv(newtitle)
@@ -85,7 +85,7 @@ def convert_flv(name):
     fileB =  os.getcwd() + "/" + name + ".mp3"
     # for FreeBSD absolute path to ffmpeg - /usr/local/bin/ffmpeg , for linux - /usr/bin/ffmpeg
     print('start encode')
-    subprocess.run(["/usr/local/bin/ffmpeg"," -i", fileA, "-acodec", "libmp3lame", "-aq", "4", fileB], stdout=FNULL)
+    subprocess.run(["/usr/local/bin/ffmpeg","-i", fileA, "-acodec", "libmp3lame", "-aq", "4", fileB], stdout=FNULL)
     print('end encode')
    # subprocess.run(['cp','-r',fileB,'/mnt/d/dev/'])
 
