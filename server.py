@@ -28,16 +28,15 @@ def chose_video_for_download(videos):
     videos_count = len(videos)
     print('chose video for download\nwrite a number 0 of', videos_count - 1)
     number = input()
-    n = re.findall('[a-zA-Z0-9-_()]{13}$', videos[int(number)])
+    name = re.findall('[a-zA-Z0-9-_()]{13}$', videos[int(number)])
     newtitle = videos[int(number)].replace(' ','_').replace('!','').replace("(","").replace(")","")
-    t1 = n[0].replace('(','').replace(')','')
-    uri = 'https://www.youtube.com/watch?v=' + t1
+    video_id = name[0].replace('(','').replace(')','')
+    uri = 'https://www.youtube.com/watch?v=' + video_id
     title = download_youtube(uri, newtitle)
     print(newtitle)
     convert_flv(newtitle)
 
 def youtube_search(kw):
-    print(kw)
     youtube = build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION, developerKey = DEVELOPER_KEY)
     search_response = youtube.search().list(
         q = kw,
@@ -47,7 +46,6 @@ def youtube_search(kw):
 
     videos = []
     channels = []
-    playlists = []
     for search_result in search_response.get("items", []):
         if search_result["id"]["kind"] == "youtube#video":
             videos.append("%s (%s)" % (search_result["snippet"]["title"], search_result["id"]["videoId"]))
@@ -81,9 +79,9 @@ def download_youtube(uri, name):
 
 def convert_flv(name):
     fileA =  os.getcwd() + "/" + name + ".webm"
-    codec = "libmp3lame"
     fileB =  os.getcwd() + "/" + name + ".mp3"
-    subprocess.run(['/usr/local/bin/ffmpeg',"-i", fileA, "-acodec", codec,"-aq","4", fileB])
+    # for FreeBSD absolute path to ffmpeg - /usr/local/bin/ffmpeg , for linux - /usr/bin/ffmpeg
+    subprocess.run(["/usr/local/bin/ffmpeg"," -i", fileA, "-acodec", "libmp3lame", "-aq", "4", fileB])
    # subprocess.run(['cp','-r',fileB,'/mnt/d/dev/'])
 
 youtube_search('limp bizkit')
