@@ -83,7 +83,7 @@ def convert_flv(name):
     fileA =  os.getcwd() + "/" + name + ".webm"
     codec = "libmp3lame"
     fileB =  os.getcwd() + "/" + name + ".mp3"
-    subprocess.run(['/usr/bin/ffmpeg',"-i", fileA, "-acodec", codec,"-aq","4", fileB])
-    subprocess.run(['cp','-r',fileB,'/mnt/d/dev/'])
+    subprocess.run(['/usr/local/bin/ffmpeg',"-i", fileA, "-acodec", codec,"-aq","4", fileB])
+   # subprocess.run(['cp','-r',fileB,'/mnt/d/dev/'])
 
 youtube_search('limp bizkit')
