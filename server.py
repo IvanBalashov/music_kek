@@ -33,7 +33,6 @@ def chose_video_for_download(videos):
     video_id = name[0].replace('(','').replace(')','')
     uri = 'https://www.youtube.com/watch?v=' + video_id
     title = download_youtube(uri, newtitle)
-    print(newtitle)
     convert_flv(newtitle)
 
 def youtube_search(kw):
@@ -63,7 +62,6 @@ def youtube_search(kw):
     chose_video_for_download(videos)
 
 def download_youtube(uri, name):
-    print(name, uri)
     ydl_opts = {
         'quiet': True,
         'no_warnings': True,
@@ -82,6 +80,7 @@ def download_youtube(uri, name):
     return data.pop('title')
 
 def convert_flv(name):
+    FNULL = open(os.devnull, 'w')
     fileA =  os.getcwd() + "/" + name + ".webm"
     fileB =  os.getcwd() + "/" + name + ".mp3"
     # for FreeBSD absolute path to ffmpeg - /usr/local/bin/ffmpeg , for linux - /usr/bin/ffmpeg
