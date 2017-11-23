@@ -80,13 +80,17 @@ def download_youtube(uri, name):
     return data.pop('title')
 
 def convert_flv(name):
+    DEVNULL = open(os.devnull, 'wb')
     fileA =  os.getcwd() + "/" + name + ".webm"
     fileB =  os.getcwd() + "/" + name + ".mp3"
+    meta = '-metadata'
+    newtitle = 'title=' + name
+    newauthor = 'artist=' + name
     # for FreeBSD absolute path to ffmpeg - /usr/local/bin/ffmpeg , for linux - /usr/bin/ffmpeg
     print('start encode')
-    subprocess.run(["/usr/local/bin/ffmpeg","-i", fileA, "-acodec", "libmp3lame", "-aq", "4", fileB], stdout=subprocess.DEVNULL)
+    subprocess.run(["/usr/local/bin/ffmpeg","-i", fileA, "-acodec", "libmp3lame", \
+        meta,newtitle,meta,newauthor,"-aq", "4", fileB])
     os.remove(fileA)
     print('end encode')
-   # subprocess.run(['cp','-r',fileB,'/mnt/d/dev/'])
 
-youtube_search('limp bizkit')
+youtube_search('anti-flag broken bones')
