@@ -65,6 +65,8 @@ def youtube_search(kw):
 def download_youtube(uri, name):
     print(name, uri)
     ydl_opts = {
+        'quiet': True,
+        'no_warnings': True,
         'format': 'bestaudio/best',
         'outtmpl': name + '.%(ext)s',
         'postprocessor': [{
