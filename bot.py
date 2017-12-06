@@ -26,15 +26,16 @@ def get_music(message):
     print(name, message.text)
     if len(name) == 0:
         message.text = "can't download in this url"
-        bot.send_message(message.chat.id,message.text)
+        bot.send_message(message.chat.id, message.text)
     else:
-        bot.send_message(message.chat.id, 'Ща все будет....')
         url = message.text
-        bot.send_message(message.chat.id, 'Поготь чуток....')  
+        t1 = bot.send_message(message.chat.id, '0%')
+        bot.edit_message_text("50%",chat_id=message.chat.id,message_id=t1.message_id)
         fake_name, title = download_by_link(url,message.chat.id)
-        bot.send_message(message.chat.id, 'Уже почти....')        
+        bot.edit_message_text("75%",chat_id=message.chat.id,message_id=t1.message_id) 
         path = convert_to_mp3(fake_name, title)
         f = open(path, 'rb')
+        bot.edit_message_text("100%",chat_id=message.chat.id,message_id=t1.message_id) 
         msg = bot.send_audio(message.chat.id, f, None, timeout=20)
         #bot.send_message(message.chat.id, msg.audio.file_id)
         remove_file(path)
