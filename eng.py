@@ -23,7 +23,7 @@ def download_by_link(link, videoid):
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
         data = ydl.extract_info(link)
     fake_name = 'NA' + str(videoid)
-    title = data.pop('title').replace(' ','_').replace('!','').replace("(","").replace(")","").replace("|","").replace("&","and").replace(":","")
+    title = data.pop('title').replace(' ','_').replace('!','').replace("(","").replace(")","").replace("|","").replace("&","and").replace(":","").replace("/","")
     return fake_name, title
 
 #def youtube_search(keyword):
@@ -40,3 +40,6 @@ def convert_to_mp3(filename, title):
         meta,newtitle,meta,newauthor,'-aq', '4', fileB])
     os.remove(fileA)
     return fileB
+
+def remove_file(path):
+    os.remove(path)

@@ -3,6 +3,7 @@ from config import bot_token
 import telebot
 import time
 import re
+from eng import remove_file
 from eng import download_by_link
 from eng import convert_to_mp3
 
@@ -21,18 +22,22 @@ def start(message):
 
 @bot.message_handler(content_types=["text"])
 def get_music(message):
-    name = re.findall('https://www.youtube.com/watch?v=[a-zA-Z0-9-_()]',message.text)
+    name = re.findall('https://www.youtube.com/watch\?v\=|https://youtu.be/',message.text)
     print(name, message.text)
     if len(name) == 0:
         message.text = "can't download in this url"
         bot.send_message(message.chat.id,message.text)
     else:
+        bot.send_message(message.chat.id, 'Ща все будет....')
         url = message.text
+        bot.send_message(message.chat.id, 'Поготь чуток....')  
         fake_name, title = download_by_link(url,message.chat.id)
+        bot.send_message(message.chat.id, 'Уже почти....')        
         path = convert_to_mp3(fake_name, title)
         f = open(path, 'rb')
         msg = bot.send_audio(message.chat.id, f, None, timeout=20)
-        bot.send_message(message.chat.id, msg.audio.file_id)
+        #bot.send_message(message.chat.id, msg.audio.file_id)
+        remove_file(path)
     time.sleep(3)
 
 if __name__ == '__main__':
