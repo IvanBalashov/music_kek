@@ -8,13 +8,12 @@ from config import path_to_wrk_dir
 from apiclient.discovery import build
 from apiclient.errors import HttpError
 
-def download_by_link(link):
-    i = 0
+def download_by_link(link, videoid):
     ydl_opts = {
         'quiet': True,
         'no_warnings': True,
         'format': 'bestaudio/best',
-        'outtmpl': '%(name)s'+str(i)+'.%(ext)s',
+        'outtmpl': '%(name)s'+str(videoid)+'.%(ext)s',
         'postprocessor': [{
             'key': 'FFmpegExtracrtAudio',
             'preferredcodec': 'flv',
@@ -23,7 +22,7 @@ def download_by_link(link):
     }
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
         data = ydl.extract_info(link)
-    fake_name = 'NA' + str(i)
+    fake_name = 'NA' + str(videoid)
     title = data.pop('title').replace(' ','_').replace('!','').replace("(","").replace(")","").replace("|","").replace("&","and").replace(":","")
     return fake_name, title
 
@@ -40,6 +39,4 @@ def convert_to_mp3(filename, title):
     subprocess.run(['/usr/bin/ffmpeg','-i', fileA, '-acodec', 'libmp3lame', \
         meta,newtitle,meta,newauthor,'-aq', '4', fileB])
     os.remove(fileA)
-
-fake_name, title = download_by_link('https://www.youtube.com/watch?v=CW5oGRx9CLM')
-convert_to_mp3(fake_name, title)
+    return fileB
