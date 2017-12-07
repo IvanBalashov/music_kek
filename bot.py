@@ -16,8 +16,8 @@ def start(message):
 
 @bot.message_handler(commands=['help'])
 def start(message):
-    message.text = "На самом деле все очень просто пока что. Надо всего лишь.... отпавить мне ссылку на видео из которого ты хочешь достать \
-        аудиодорожку и ждать) да, пока что сервис работает не очень быстро но в дальнейшем разработчик все поправит"
+    message.text = "На самом деле все очень просто пока что. Надо всего лишь.... отправить мне ссылку на видео из которого ты хочешь достать \
+        аудиодорожку и ждать) да, пока что сервис работает не очень быстро, но в дальнейшем разработчик все поправит"
     bot.send_message(message.chat.id, message.text)
 
 @bot.message_handler(content_types=["text"])
@@ -30,13 +30,14 @@ def get_music(message):
     else:
         url = message.text
         t1 = bot.send_message(message.chat.id, '0%')
-        bot.edit_message_text("50%",chat_id=message.chat.id,message_id=t1.message_id)
+        bot.edit_message_text("25%",chat_id=message.chat.id,message_id=t1.message_id)
         fake_name, title = download_by_link(url,message.chat.id)
-        bot.edit_message_text("75%",chat_id=message.chat.id,message_id=t1.message_id) 
+        bot.edit_message_text("50%",chat_id=message.chat.id,message_id=t1.message_id) 
         path = convert_to_mp3(fake_name, title)
         f = open(path, 'rb')
-        bot.edit_message_text("100%",chat_id=message.chat.id,message_id=t1.message_id) 
+        bot.edit_message_text("75%",chat_id=message.chat.id,message_id=t1.message_id) 
         msg = bot.send_audio(message.chat.id, f, None, timeout=20)
+        bot.edit_message_text("100%",chat_id=message.chat.id,message_id=t1.message_id) 
         #bot.send_message(message.chat.id, msg.audio.file_id)
         remove_file(path)
     time.sleep(3)

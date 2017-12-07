@@ -24,8 +24,15 @@ def download_by_link(link, videoid):
         data = ydl.extract_info(link)
     fake_name = 'NA' + str(videoid)
     title = data.pop('title').replace(' ','_').replace('!','').replace("(","").replace(")","").replace("|","").replace("&","and").replace(":","").replace("/","")
+    title = translate(title)
     return fake_name, title
 
+def translate(inp):
+    symbols = (u"абвгдеёжзийклмнопрстуфхцчшщъыьэюяАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ",
+            u"abvgdeejzijklmnoprstufhzcss_y_euaABVGDEEJZIJKLMNOPRSTUFHZCSS_Y_EUA")
+    tr = {ord(a):ord(b) for a, b in zip(*symbols)}
+    output = inp.translate(tr)
+    return output
 #def youtube_search(keyword):
 
 def convert_to_mp3(filename, title):
