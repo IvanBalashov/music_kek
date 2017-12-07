@@ -24,6 +24,7 @@ def start(message):
 
 @bot.message_handler(content_types=["text"])
 def get_music(message):
+    i = 2
     name = re.findall('https://www.youtube.com/watch\?v\=|https://youtu.be/',message.text)
     print(name, message.text)
     if len(name) == 0:
@@ -40,9 +41,11 @@ def get_music(message):
         bot.edit_message_text("75%",chat_id=message.chat.id,message_id=t1.message_id) 
         msg = bot.send_audio(message.chat.id, f, None, timeout=20)
         bot.edit_message_text("100%",chat_id=message.chat.id,message_id=t1.message_id)
-        db.add_file(msg.audio.file_id, "0", url)
+        i += 1
+        db.add_file(i, msg.audio.file_id, "0", url)
         #bot.send_message(message.chat.id, msg.audio.file_id)
         eng.remove_file(path)
+        print(db.select_all())
     time.sleep(3)
 
 if __name__ == '__main__':

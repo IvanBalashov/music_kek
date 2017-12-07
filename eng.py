@@ -5,8 +5,8 @@ import subprocess
 import os
 from config import youtube_api
 from config import path_to_wrk_dir
-from apiclient.discovery import build
-from apiclient.errors import HttpError
+#from apiclient.discovery import build
+#from apiclient.errors import HttpError
 
 def download_by_link(link, videoid):
     ydl_opts = {
