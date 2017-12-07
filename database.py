@@ -4,7 +4,7 @@ import sqlite3
 class SQLighter:
 
     def __init__(self, database):
-        self.connection = sqlite3.connect(database)
+        self.connection = sqlite3.connect(database, check_same_thread=False)
         self.cursor = self.connection.cursor()
 
     def select_all(self):
@@ -27,6 +27,10 @@ class SQLighter:
                 return False
             else:
                 return True
+
+    def select_by_url(self, url):
+        with self.connection:
+            return self.cursor.execute('SELECT file_id FROM files WHERE url = ?',(url,)).fetchall()[0]
 
     def select_single(self, rownum):
         """ Получаем одну строку с номером rownum """

@@ -31,18 +31,21 @@ def get_music(message):
         bot.send_message(message.chat.id, message.text)
     else:
         url = message.text
-        t1 = bot.send_message(message.chat.id, '0%')
-        bot.edit_message_text("25%",chat_id=message.chat.id,message_id=t1.message_id)
-        fake_name, title = eng.download_by_link(url,message.chat.id)
-        bot.edit_message_text("50%",chat_id=message.chat.id,message_id=t1.message_id) 
-        path = eng.convert_to_mp3(fake_name, title)
-        f = open(path, 'rb')
-        bot.edit_message_text("75%",chat_id=message.chat.id,message_id=t1.message_id) 
-        msg = bot.send_audio(message.chat.id, f, None, timeout=20)
-        bot.edit_message_text("100%",chat_id=message.chat.id,message_id=t1.message_id)
-        db.add_file(msg.audio.file_id, "0", url)
-        #bot.send_message(message.chat.id, msg.audio.file_id)
-        eng.remove_file(path)
+        if db.check_exist_file(url):
+            fileid = db.select_by_url(url)
+            msg = bot.send_audio(message.chat.id,fileid,None, timeout=5)
+        else:
+            t1 = bot.send_message(message.chat.id, '0%')
+            bot.edit_message_text("25%",chat_id=message.chat.id,message_id=t1.message_id)
+            fake_name, title = eng.download_by_link(url,message.chat.id)
+            bot.edit_message_text("50%",chat_id=message.chat.id,message_id=t1.message_id) 
+            path = eng.convert_to_mp3(fake_name, title)
+            f = open(path, 'rb')
+            bot.edit_message_text("75%",chat_id=message.chat.id,message_id=t1.message_id) 
+            msg = bot.send_audio(message.chat.id, f, None, timeout=20)
+            bot.edit_message_text("100%",chat_id=message.chat.id,message_id=t1.message_id)
+            db.add_file(msg.audio.file_id, "0", url)
+            eng.remove_file(path)
     time.sleep(3)
 
 if __name__ == '__main__':
