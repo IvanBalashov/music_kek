@@ -24,6 +24,7 @@ def download_by_link(link, videoid):
         data = ydl.extract_info(link)
     fake_name = 'NA' + str(videoid)
     title = data.pop('title').replace(' ','_').replace('!','').replace("(","").replace(")","").replace("|","").replace("&","and").replace(":","").replace("/","")
+    title = re.sub(r'[^\w]','', title)
     title = translate(title)
     return fake_name, title
 
