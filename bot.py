@@ -1,13 +1,15 @@
 # -*- coding: utf-8 -*-
 from config import bot_token
+from config import database_name
 import telebot
 import time
 import re
-from eng import remove_file
-from eng import download_by_link
-from eng import convert_to_mp3
+from database import SQLighter
+import eng
 
 bot = telebot.TeleBot(bot_token)
+db = SQLighter(database_name)
+
 @bot.message_handler(commands=['start'])
 def start(message):
     message.text = 'Привет. Я простой бот который может скачать твой любимый трек с youtube. Для того чтоб научиться мной пользоваться \
@@ -31,15 +33,16 @@ def get_music(message):
         url = message.text
         t1 = bot.send_message(message.chat.id, '0%')
         bot.edit_message_text("25%",chat_id=message.chat.id,message_id=t1.message_id)
-        fake_name, title = download_by_link(url,message.chat.id)
+        fake_name, title = eng.download_by_link(url,message.chat.id)
         bot.edit_message_text("50%",chat_id=message.chat.id,message_id=t1.message_id) 
-        path = convert_to_mp3(fake_name, title)
+        path = eng.convert_to_mp3(fake_name, title)
         f = open(path, 'rb')
         bot.edit_message_text("75%",chat_id=message.chat.id,message_id=t1.message_id) 
         msg = bot.send_audio(message.chat.id, f, None, timeout=20)
-        bot.edit_message_text("100%",chat_id=message.chat.id,message_id=t1.message_id) 
+        bot.edit_message_text("100%",chat_id=message.chat.id,message_id=t1.message_id)
+        db.add_file(msg.audio.file_id, "0", url)
         #bot.send_message(message.chat.id, msg.audio.file_id)
-        remove_file(path)
+        eng.remove_file(path)
     time.sleep(3)
 
 if __name__ == '__main__':
