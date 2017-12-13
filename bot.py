@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from config import bot_token
 from config import database_name
 import telebot
@@ -43,11 +42,15 @@ def get_music(message):
             bot.edit_message_text("50%",chat_id=message.chat.id,message_id=t1.message_id) 
             path = eng.convert_to_mp3(fake_name, title)
             f = open(path, 'rb')
-            bot.edit_message_text("75%",chat_id=message.chat.id,message_id=t1.message_id) 
-            msg = bot.send_audio(message.chat.id, f, None, timeout=20)
-            bot.edit_message_text("100%",chat_id=message.chat.id,message_id=t1.message_id)
-            print(url)
-            db.add_file(file_id=msg.audio.file_id, file_name="0", url=url)
+            bot.edit_message_text("75%",chat_id=message.chat.id,message_id=t1.message_id)
+            try:
+                msg = bot.send_audio(message.chat.id, f, None, timeout=60)
+                bot.edit_message_text("100%",chat_id=message.chat.id,message_id=t1.message_id)
+                db.add_file(file_id=msg.audio.file_id, file_name="0", url=url)
+                pass
+            except Exception:
+                bot.edit_message_text("Can't load file. SUCH BIG, VERY FILE!!!",chat_id=message.chat.id,message_id=t1.message_id)
+                pass
             eng.remove_file(path)
     time.sleep(3)
 
