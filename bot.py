@@ -26,7 +26,6 @@ def start(message):
 def get_music(message):
     i = 2
     name = re.findall('https://www.youtube.com/watch\?v\=|https://youtu.be/',message.text)
-    print(name, message.text)
     if len(name) == 0:
         message.text = "can't download in this url"
         bot.send_message(message.chat.id, message.text)
