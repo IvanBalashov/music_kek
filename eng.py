@@ -45,7 +45,7 @@ def convert_to_mp3(filename, title):
     newtitle = 'title=' + title
     newauthor = 'artist=' + title
     # for FreeBSD absolute path to ffmpeg - /usr/local/bin/ffmpeg , for linux - /usr/bin/ffmpeg
-    subprocess.run(['/usr/local/bin/ffmpeg','-i', fileA, '-acodec', 'libmp3lame', \
+    subprocess.run(['/usr/bin/ffmpeg','-i', fileA, '-acodec', 'libmp3lame', \
         meta,newtitle,meta,newauthor,'-aq', '4', fileB])
     os.remove(fileA)
     return fileB
