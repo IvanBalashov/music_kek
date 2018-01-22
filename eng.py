@@ -12,12 +12,12 @@ def download_by_link(link, videoid):
     ydl_opts = {
         'quiet': True,
         'no_warnings': True,
-        'format': 'bestaudio/best',
+        'format': 'best',
         'outtmpl': '%(name)s'+str(videoid)+'.%(ext)s',
         'postprocessor': [{
             'key': 'FFmpegExtracrtAudio',
             'preferredcodec': 'flv',
-            'preferredquality':'512',
+            'preferredquality':'256',
          }],
     }
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
@@ -39,14 +39,14 @@ def translate(inp):
 
 def convert_to_mp3(filename, title):
     DEVNULL = open(os.devnull, 'wb')
-    fileA = path_to_wrk_dir + filename + '.webm'
+    fileA = path_to_wrk_dir + filename + '.mp4'
     fileB = path_to_wrk_dir + title + '.mp3'
     meta = '-metadata'
     newtitle = 'title=' + title
     newauthor = 'artist=' + title
     # for FreeBSD absolute path to ffmpeg - /usr/local/bin/ffmpeg , for linux - /usr/bin/ffmpeg
     subprocess.run(['/usr/bin/ffmpeg','-i', fileA, '-acodec', 'libmp3lame', \
-        meta,newtitle,meta,newauthor,'-aq', '4', fileB])
+        meta,newtitle,meta,newauthor,'-aq', '4','-b:a','320k', fileB])
     os.remove(fileA)
     return fileB
 

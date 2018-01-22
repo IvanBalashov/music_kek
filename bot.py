@@ -66,8 +66,7 @@ def query_text(query):
             except Exception as e:
                 print(e)
         else:
-            print(query.id)
-            didnt_download = 'У меня нет такого файла, для того чтоб это исправить пишите в личку мне @Music_kek_bot.'
+            didnt_download = 'У меня нет такого файла, для того чтоб это исправить пишите в личку мне @MusicKekBot.'
             try:
                 ans = types.InlineQueryResultArticle(
                     id='1',
@@ -109,7 +108,7 @@ def get_music(message):
             except Exception:
                 bot.edit_message_text('Слишком большой файл!',chat_id=message.chat.id,message_id=t1.message_id)
                 pass
-            eng.remove_file(path)
+            #eng.remove_file(path)
     time.sleep(3)
 
 if __name__ == '__main__':
