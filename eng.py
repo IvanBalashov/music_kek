@@ -2,6 +2,7 @@ import urllib.request as url
 import youtube_dl
 import re
 import subprocess
+from subprocess import run
 from os import listdir, remove, devnull
 from os.path import isfile, join
 from data.config import path_to_wrk_dir
@@ -42,18 +43,20 @@ def convert_to_mp3(filename, title):
 	# for FreeBSD absolute path to ffmpeg - /usr/local/bin/ffmpeg , for linux - /usr/bin/ffmpeg
 	try:
 		fileA = f"{path_to_wrk_dir}{filename}.webm"
-		subprocess.run(['/usr/bin/ffmpeg','-i', fileA, '-acodec', 'libmp3lame', \
+		run(['/usr/bin/ffmpeg','-i', fileA, '-acodec', 'libmp3lame', \
 			meta, newtitle, meta, newauthor, '-aq', '0', fileB])
 	except Exception:
 		fileA = f"{path_to_wrk_dir}{filename}.mp4"
-		subprocess.run(['/usr/bin/ffmpeg','-i', fileA, '-acodec', 'libmp3lame', \
+		run(['/usr/bin/ffmpeg','-i', fileA, '-acodec', 'libmp3lame', \
 			meta, newtitle, meta, newauthor, '-aq', '0', fileB])
 	try:
 		remove(fileA)
 	except FileNotFoundError:
 		files = get_file_list(path_to_wrk_dir)
+		print(files)
 		for i in files:
-			if -1 == f"{path_to_wrk_dir}{i}".find(f"{filename}") and f"{i}".find(f".mp3") == -1:
+			if -1 != f"{path_to_wrk_dir}{i}".find(f"{filename}") and f"{i}".find(f".mp3") == -1:
+				print(f"removed - {path_to_wrk_dir}{i}")
 				try:
 					remove(f"{path_to_wrk_dir}{i}")
 				except FileNotFoundError:
