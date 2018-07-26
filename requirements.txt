@@ -1,0 +1,2 @@
+youtube_dl==2017.12.2
+pytelegrambotapi==2.2.3
