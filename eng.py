@@ -3,6 +3,7 @@ import youtube_dl
 import re
 import subprocess
 import os
+from os.path import isfile, join
 from data.config import path_to_wrk_dir
 
 def download_by_link(link, videoid):
@@ -61,4 +62,4 @@ def remove_file(path):
 	os.remove(path)
 
 def get_file_list(path: str) -> list:
-    return [f for f in os.listdir(path) if os.path(os.path.join(path, f))]
+    return [f for f in os.listdir(path) if os.path(join(path, f))]
