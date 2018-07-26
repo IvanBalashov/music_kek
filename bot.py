@@ -1,7 +1,7 @@
 import telebot
 import time
 import re
-import os 
+from os.path import getsize
 import eng
 from data.config import bot_token
 from data.config import database_name
@@ -41,7 +41,7 @@ def get_music(message):
             fake_name, title = eng.download_by_link(url, message.chat.id)
             bot.edit_message_text(f"50%", chat_id = message.chat.id, message_id = t1.message_id) 
             path = eng.convert_to_mp3(fake_name, title)
-            size = os.path.getsize(path) / 1024 / 1024
+            size = getsize(path) / 1024 / 1024
             if size > 30:
                 bot.edit_message_text(f"Can't load this song.", chat_id = message.chat.id, message_id = t1.message_id)
             else:

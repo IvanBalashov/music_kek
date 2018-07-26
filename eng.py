@@ -54,8 +54,10 @@ def convert_to_mp3(filename, title):
 		files = get_file_list(path_to_wrk_dir)
 		for i in files:
 			if -1 == f"{path_to_wrk_dir}{i}".find(f"{filename}") and f"{i}".find(f".mp3") == -1:
-				remove(f"{path_to_wrk_dir}{i}")
-
+				try:
+					remove(f"{path_to_wrk_dir}{i}")
+				except FileNotFoundError:
+					print(f"can't remove file {path_to_wrk_dir}{i}")
 	return fileB
 
 def remove_file(path):
