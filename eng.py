@@ -3,7 +3,7 @@ import youtube_dl
 import re
 import subprocess
 import os
-from config import path_to_wrk_dir
+from data.config import path_to_wrk_dir
 
 def download_by_link(link, videoid):
 	ydl_opts = {

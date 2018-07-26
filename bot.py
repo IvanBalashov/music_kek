@@ -3,8 +3,8 @@ import time
 import re
 import os 
 import eng
-from config import bot_token
-from config import database_name
+from data.config import bot_token
+from data.config import database_name
 from telebot import types
 from database import SQLighter
 
