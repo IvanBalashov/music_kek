@@ -61,4 +61,4 @@ def remove_file(path):
 	os.remove(path)
 
 def get_file_list(path: str) -> list:
-    return [f for f in os.listdir(path) if os.path(join(path, f))]
+    return [f for f in os.listdir(path) if os.path(os.path.join(path, f))]
