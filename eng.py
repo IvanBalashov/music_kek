@@ -2,7 +2,7 @@ import urllib.request as url
 import youtube_dl
 import re
 import subprocess
-import os
+from os import listdir, remove, devnull
 from os.path import isfile, join
 from data.config import path_to_wrk_dir
 
@@ -34,7 +34,7 @@ def translate(inp):
 	return output
 
 def convert_to_mp3(filename, title):
-	DEVNULL = open(os.devnull, 'wb')
+	DEVNULL = open(devnull, 'wb')
 	fileB = f"{path_to_wrk_dir}{title}.mp3"
 	meta = f"-metadata"
 	newtitle = f"title={title}"
@@ -49,17 +49,17 @@ def convert_to_mp3(filename, title):
 		subprocess.run(['/usr/bin/ffmpeg','-i', fileA, '-acodec', 'libmp3lame', \
 			meta, newtitle, meta, newauthor, '-aq', '0', fileB])
 	try:
-		os.remove(fileA)
+		remove(fileA)
 	except FileNotFoundError:
 		files = get_file_list(path_to_wrk_dir)
 		for i in files:
 			if -1 == f"{path_to_wrk_dir}{i}".find(f"{filename}") and f"{i}".find(f".mp3") == -1:
-				os.remove(f"{path_to_wrk_dir}{i}")
+				remove(f"{path_to_wrk_dir}{i}")
 
 	return fileB
 
 def remove_file(path):
-	os.remove(path)
+	remove(path)
 
 def get_file_list(path: str) -> list:
-    return [f for f in os.listdir(path) if os.path(join(path, f))]
+    return [f for f in listdir(path) if isfile(join(path, f))]
