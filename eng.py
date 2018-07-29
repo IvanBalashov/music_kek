@@ -47,9 +47,9 @@ def convert_to_mp3(filename: str, title: str, start: int=None, end: int=None) ->
 	# for FreeBSD absolute path to ffmpeg - /usr/local/bin/ffmpeg , for linux - /usr/bin/ffmpeg
 	fileA = f"{path_to_wrk_dir}{filename}.webm"
 	args = ['/usr/bin/ffmpeg','-i', fileA, '-acodec', 'libmp3lame']		
-	if start is not None or start != 0:
+	if start is not None and start != 0:
 		args = args + ['-ss', str(start)]
-	if end is not None or end != 0:
+	if end is not None and end != 0:
 		args = args + ['-t', str(end - start)]
 	args = args + [meta, newtitle, meta, newauthor, '-aq', '0', fileB]
 	try:
