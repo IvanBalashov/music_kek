@@ -7,7 +7,7 @@ from os import listdir, remove, devnull
 from os.path import isfile, join
 from data.config import path_to_wrk_dir
 
-def download_by_link(link: str, videoid: str, start: int=None, end: int=None) -> str, str:
+def download_by_link(link: str, videoid: str, start: int=None, end: int=None):
 	"""This method is setup youtube_dl for downlad video"""
 	ydl_opts = {
 		'quiet': True,
