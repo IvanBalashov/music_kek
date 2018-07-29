@@ -49,7 +49,7 @@ def convert_to_mp3(filename: str, title: str, start: int=None, end: int=None) ->
 	args = ['/usr/bin/ffmpeg','-i', fileA, '-acodec', 'libmp3lame']		
 	if start is not None or start != 0:
 		args = args + ['-ss', str(start)]
-	if end is not None or start != 0:
+	if end is not None or end != 0:
 		args = args + ['-t', str(end - start)]
 	args = args + [meta, newtitle, meta, newauthor, '-aq', '0', fileB]
 	try:
