@@ -21,9 +21,9 @@ def download_by_link(link: str, videoid: str, start: int=None, end: int=None) ->
 		 }],
 	}
 	if start is not None:
-		ydl_opts['start_time'] = start
+		ydl_opts.update({'start_time': start})
 	if end is not None:
-		ydl_opts['end_time'] = end
+		ydl_opts.update({'end_time': end})
 	print(f"ydl_opts = {ydl_opts}")
 	with youtube_dl.YoutubeDL(ydl_opts) as ydl:
 		data = ydl.extract_info(link)

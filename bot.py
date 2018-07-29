@@ -32,6 +32,7 @@ def get_music(message: str):
     else:
         start: list = re.findall(r'\s(-старт|-с|-start|-s)\s(\d{1,2}\.\d{1,2}|\d{1,2})', message.text)
         finish: list = re.findall(r'\s(-конец|-к|-end|-e)\s(\d{1,2}\.\d{1,2}|\d{1,2})', message.text)
+        print(f"regexps - start_time {start} end_time {finish}")
         if len(start) > 2:
             if start[1].find('.') == -1:
                 start_time: int = int(start[1])
