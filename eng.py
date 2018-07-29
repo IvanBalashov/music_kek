@@ -7,8 +7,7 @@ from os import listdir, remove, devnull
 from os.path import isfile, join
 from data.config import path_to_wrk_dir
 
-def download_by_link(link: str, videoid: str, start: int=None, end: int=None) -> [str, str]:
-	print(f"start downloading{start}, {end}")
+def download_by_link(link: str, videoid: str) -> [str, str]:
 	"""This method is setup youtube_dl for downlad video"""
 	ydl_opts = {
 		'quiet': True,
@@ -20,11 +19,6 @@ def download_by_link(link: str, videoid: str, start: int=None, end: int=None) ->
 			'preferredquality': '512',
 		 }],
 	}
-	if start is not None:
-		ydl_opts.update({'start_time': start})
-	if end is not None:
-		ydl_opts.update({'end_time': end})
-	print(f"ydl_opts = {ydl_opts}")
 	with youtube_dl.YoutubeDL(ydl_opts) as ydl:
 		data = ydl.extract_info(link)
 	fake_name = 'NA' + str(videoid)
@@ -43,20 +37,26 @@ def translate(inp: str) -> str:
 	output = inp.translate(tr)
 	return output
 
-def convert_to_mp3(filename: str, title: str) -> str:
+def convert_to_mp3(filename: str, title: str, start: int=None, end: int=None) -> str:
+	arg_to_start = None
+	arg_to_end = None
 	fileB = f"{path_to_wrk_dir}{title}.mp3"
 	meta = f"-metadata"
 	newtitle = f"title={title}"
 	newauthor = f"artist={title}"
 	# for FreeBSD absolute path to ffmpeg - /usr/local/bin/ffmpeg , for linux - /usr/bin/ffmpeg
+	fileA = f"{path_to_wrk_dir}{filename}.webm"
+	args = ['/usr/bin/ffmpeg','-i', fileA, '-acodec', 'libmp3lame']		
+	if start is not None or start != 0:
+		args = args + ['-ss', str(start)]
+	if end is not None or start != 0:
+		args = args + ['-t', str(end - start)]
+	args = args + [meta, newtitle, meta, newauthor, '-aq', '0', fileB]
 	try:
-		fileA = f"{path_to_wrk_dir}{filename}.webm"
-		run(['/usr/bin/ffmpeg','-i', fileA, '-acodec', 'libmp3lame', \
-			meta, newtitle, meta, newauthor, '-aq', '0', fileB])
+		run(args)
 	except Exception:
-		fileA = f"{path_to_wrk_dir}{filename}.mp4"
 		run(['/usr/bin/ffmpeg','-i', fileA, '-acodec', 'libmp3lame', \
-			meta, newtitle, meta, newauthor, '-aq', '0', fileB])
+			meta, newtitle, meta, newauthor, arg_to_start, arg_to_end, '-aq', '0', fileB])
 	try:
 		remove(fileA)
 	except FileNotFoundError:

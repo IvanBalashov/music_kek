@@ -22,5 +22,8 @@ case $1 in
         docker build -t music_kek:v0.1 ./
         docker run --restart unless-stopped -d -v /home/music/music_kek/data/:/root/music_kek/data/ --name music_kek_v0.1 music_kek:v0.1
     ;;
+    "inter")
+        docker run -it --entrypoint /bin/bash -v /home/music/music_kek/data/:/root/music_kek/data/ --name music_kek_v0.1 music_kek:v0.1
+    ;;
 esac
 
