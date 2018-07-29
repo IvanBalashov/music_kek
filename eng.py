@@ -8,6 +8,7 @@ from os.path import isfile, join
 from data.config import path_to_wrk_dir
 
 def download_by_link(link: str, videoid: str, start: int=None, end: int=None) -> [str, str]:
+	print(f"start downloading{start}, {end}")
 	"""This method is setup youtube_dl for downlad video"""
 	ydl_opts = {
 		'quiet': True,
@@ -23,7 +24,7 @@ def download_by_link(link: str, videoid: str, start: int=None, end: int=None) ->
 		ydl_opts['start_time'] = start
 	if end is not None:
 		ydl_opts['end_time'] = end
-	print(f"ydl_opts = {ydl_opts}\n")
+	print(f"ydl_opts = {ydl_opts}")
 	with youtube_dl.YoutubeDL(ydl_opts) as ydl:
 		data = ydl.extract_info(link)
 	fake_name = 'NA' + str(videoid)

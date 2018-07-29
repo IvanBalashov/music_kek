@@ -32,22 +32,23 @@ def get_music(message: str):
     else:
         start: list = re.findall(r'\s(-старт|-с|-start|-s)\s(\d{1,2}\.\d{1,2}|\d{1,2})', message.text)
         finish: list = re.findall(r'\s(-конец|-к|-end|-e)\s(\d{1,2}\.\d{1,2}|\d{1,2})', message.text)
-        if len(start) == 2:
+        if len(start) > 2:
             if start[1].find('.') == -1:
                 start_time: int = int(start[1])
             else:
-                time = start[1].split('.')
-                start_time = int(time[0]) * 60 + int(time[1])
+                parsed_time = start[1].split('.')
+                start_time = int(parsed_time[0]) * 60 + int(parsed_time[1])
         else:
             start_time = None
-        if len(finish) == 2:
+        if len(finish) > 2:
             if finish[1].find('.') == -1:
                 end_time: int = int(finish[1])
             else:
-                time = finish[1].split('.')
-                end_time = int(time[0]) * 60 + int(time[1])
+                parsed_time = finish[1].split('.')
+                end_time = int(parsed_time[0]) * 60 + int(parsed_time[1])
         else:
             end_time = None
+        print(f"parsed args - start_time {start_time} end_time {end_time}")
         url = message.text
         if db.check_exist_file(url):
             fileid = db.select_by_url(url)
