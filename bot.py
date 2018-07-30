@@ -13,16 +13,17 @@ db = SQLighter(database_name)
 
 @bot.message_handler(commands=['start'])
 def start(message):
-	message.text = f"Привет. Я простой бот который может скачать \
-				твой любимый трек с youtube. Для того чтоб научиться мной \
+	print(f"start message - {message}")
+	message.text = f"Привет. Я простой бот который может скачать\
+				твой любимый трек с youtube. Для того чтоб научиться мной\
 				пользоваться введи /help."
 	bot.send_message(message.chat.id, message.text)
 
 @bot.message_handler(commands=['help'])
 def start(message):
 	message.text = f"На самом деле все очень просто пока что. Надо всего лишь\
-		....отправить мне ссылку на видео из которого ты хочешь достать \
-		аудиодорожку и ждать) да, пока что сервис работает не очень \
+		....отправить мне ссылку на видео из которого ты хочешь достать\
+		аудиодорожку и ждать) да, пока что сервис работает не очень\
 		быстро, но в дальнейшем разработчик все поправит"
 	bot.send_message(message.chat.id, message.text)
 
