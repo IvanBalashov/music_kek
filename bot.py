@@ -37,7 +37,6 @@ def get_music(message: str):
     else:
         start = re.findall(r'\s(-старт|-с|-start|-s)\s(\d{1,2}\.\d{1,2}|\d{1,2})', message.text)
         finish = re.findall(r'\s(-конец|-к|-end|-e)\s(\d{1,2}\.\d{1,2}|\d{1,2})', message.text)
-        print(f"regexps - start_time {start} end_time {finish}")
         if len(start) != 0:
             try:
                 if start[0][1].find('.') == -1:
@@ -46,7 +45,8 @@ def get_music(message: str):
                     parsed_time = start[0][1].split('.')
                     start_time = int(parsed_time[0]) * 60 + int(parsed_time[1])
             except IndexError:
-                print("123")
+                message.text = f"Error in arguments."
+                bot.send_message(message.chat.id, message.text)
         else:
             start_time = None
         if len(finish) != 0:
@@ -57,7 +57,8 @@ def get_music(message: str):
                     parsed_time = finish[0][1].split('.')
                     end_time = int(parsed_time[0]) * 60 + int(parsed_time[1])
             except IndexError:
-                print("123")
+                message.text = f"Error in arguments."
+                bot.send_message(message.chat.id, message.text)
         else:
             end_time = None
         print(f"parsed args - start_time {start_time} end_time {end_time}")
