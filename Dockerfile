@@ -12,7 +12,7 @@ RUN echo "deb http://ppa.launchpad.net/jonathonf/python-3.6/ubuntu xenial main" 
 && pip3.6 install -r /root/music_kek/requirements.txt
 
 COPY entry-point.sh /root/music_kek/
-RUN mkdir /root/music_kek/data
-RUN touch /root/music_kek/data/__init__.py
+#RUN mkdir /root/music_kek/data
+#RUN touch /root/music_kek/data/__init__.py
 #EXPOSE 8082
 ENTRYPOINT ["/bin/bash","/root/music_kek/entry-point.sh"]
