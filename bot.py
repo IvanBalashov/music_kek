@@ -27,12 +27,23 @@ def start(message):
 		быстро, но в дальнейшем разработчик все поправит"
 	bot.send_message(message.chat.id, message.text)
 
+@bot.message_handler(commands=['url'])
+def get_url(message):
+	new_message = message
+	new_message.message_id = message.message_id + 1
+	downlad_music(new_message)
+
 @bot.message_handler(content_types=["text"])
 def get_music(message):
+	download_music(message)
+	time.sleep(3)
+
+def downlad_music(message):
 	print(f"message - {message}")
 	start_time = 0
 	end_time = 0
 	url = re.findall(r'https://www.youtube.com/watch\?v\=[0-9A-Za-z\_\-]{11}|https://youtu.be/[0-9A-Za-z\_\-]{11}', message.text)
+	print(f"url - {url}")
 	if len(url) == 0:
 		message.text = f"Only youtube URLs."
 		bot.send_message(message.chat.id, message.text)
@@ -64,14 +75,14 @@ def get_music(message):
 		else:
 			end_time = None
 		print(f"parsed args - start_time {start_time} end_time {end_time}")
-		url = message.text
-		if db.check_exist_file(url):
-			fileid = db.select_by_url(url)
+		url_for_download = url[0]
+		if db.check_exist_file(url_for_download):
+			fileid = db.select_by_url(url_for_download)
 			bot.send_audio(message.chat.id, fileid[0], None, timeout = 5)
 		else:
 			t1 = bot.send_message(message.chat.id, f"0%")
 			bot.edit_message_text(f"25%", chat_id=message.chat.id, message_id=t1.message_id)
-			fake_name, title = eng.download_by_link(url, message.chat.id)
+			fake_name, title = eng.download_by_link(url_for_download, message.chat.id)
 			bot.edit_message_text(f"50%", chat_id=message.chat.id, message_id=t1.message_id) 
 			path = eng.convert_to_mp3(fake_name, title, start_time, end_time)
 			size = getsize(path) / 1024 / 1024
@@ -89,7 +100,7 @@ def get_music(message):
 					bot.edit_message_text(f"TimeOut.", chat_id=message.chat.id, message_id=t1.message_id)
 					pass
 				eng.remove_file(path)
-	time.sleep(3)
+
 
 if __name__ == '__main__':
 	while True:
