@@ -27,7 +27,8 @@ def start(message):
 	bot.send_message(message.chat.id, message.text)
 
 @bot.message_handler(content_types=["text"])
-def get_music(message: str):
+def get_music(message):
+	print(f"message - {message}")
 	start_time = 0
 	end_time = 0
 	url = re.findall(r'https://www.youtube.com/watch\?v\=[0-9A-Za-z\_\-]{11}|https://youtu.be/[0-9A-Za-z\_\-]{11}', message.text)
