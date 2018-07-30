@@ -102,6 +102,6 @@ if __name__ == '__main__':
 	while True:
 		try:
 			bot.polling(none_stop = True)
-	except Exception:
-		print(f"bot has been falling")
-		time.sleep(5)
+		except Exception:
+			print(f"bot has been falling")
+			time.sleep(5)
