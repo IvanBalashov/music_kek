@@ -59,10 +59,13 @@ def callback_handler(call):
 				download_music(call.message, url)
 				time.sleep(3)
 
-#@bot.message_handler(content_types=["text"])
-#def get_music(message):
-	#download_music(message)
-	#time.sleep(3)
+@bot.message_handler(content_types=["text"])
+def get_music(message):
+	url = re.findall(r'https://www.youtube.com/watch\?v\=[0-9A-Za-z\_\-]{11}|https://youtu.be/[0-9A-Za-z\_\-]{11}', message.text)
+	if len(url) != 0:
+			bot.send_message(message.chat.id, "ok")
+			download_music(message, url)
+			time.sleep(3)
 
 def download_music(message, url):
 	url_for_download = url[0]
