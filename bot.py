@@ -31,81 +31,69 @@ def start(message):
 def get_url(message):
 	new_message = message
 	new_message.message_id = message.message_id + 1
-	downlad_music(new_message)
+	download_music(new_message)
 
-@bot.message_handler(content_types=["text"])
-def get_music(message):
-	download_music(message)
-	time.sleep(3)
+@bot.message_handler(commands=['dw'])
+def test_method(message):
+	keyboard = types.InlineKeyboardMarkup()
+	full = types.InlineKeyboardButton(text="Full video?", callback_data=message.text)
+	part = types.InlineKeyboardButton(text="Part video?", callback_data="part")
+	keyboard.add(full)
+	keyboard.add(part)
+	bot.send_message(message.chat.id, "test_method", reply_markup=keyboard)
 
-def downlad_music(message):
-	print(f"message - {message}")
-	start_time = 0
-	end_time = 0
-	url = re.findall(r'https://www.youtube.com/watch\?v\=[0-9A-Za-z\_\-]{11}|https://youtu.be/[0-9A-Za-z\_\-]{11}', message.text)
-	print(f"url - {url}")
-	if len(url) == 0:
-		message.text = f"Only youtube URLs."
-		bot.send_message(message.chat.id, message.text)
+@bot.callback_query_handler(func=lambda call: True)
+def callback_handler(call):
+	if call.message:
+		print(f"call.message - {call.data}")
+		if call.data == "part":
+			keyboard = types.InlineKeyboardMarkup()
+			start = types.InlineKeyboardButton(text="start", callback_data="start")
+			finnish = types.InlineKeyboardButton(text="finnish", callback_data="fin")
+			keyboard.add(start)
+			keyboard.add(finnish)
+			bot.send_message(call.message.chat.id, "plz write timing", reply_markup=keyboard)
+		url = re.findall(r'https://www.youtube.com/watch\?v\=[0-9A-Za-z\_\-]{11}|https://youtu.be/[0-9A-Za-z\_\-]{11}', call.data)
+		if len(url) != 0:
+				bot.send_message(call.message.chat.id, "ok")
+				download_music(call.message, url)
+				time.sleep(3)
+
+#@bot.message_handler(content_types=["text"])
+#def get_music(message):
+	#download_music(message)
+	#time.sleep(3)
+
+def download_music(message, url):
+	url_for_download = url[0]
+	if db.check_exist_file(url_for_download):
+		fileid = db.select_by_url(url_for_download)
+		bot.send_audio(message.chat.id, fileid[0], None, timeout = 5)
 	else:
-		start = re.findall(r'\s(-старт|-с|-start|-s)\s(\d{1,2}\.\d{1,2}|\d{1,2})', message.text)
-		finish = re.findall(r'\s(-конец|-к|-end|-e)\s(\d{1,2}\.\d{1,2}|\d{1,2})', message.text)
-		if len(start) != 0:
+		t1 = bot.send_message(message.chat.id, f"0%")
+		bot.edit_message_text(f"25%", chat_id=message.chat.id, message_id=t1.message_id)
+		fake_name, title = eng.download_by_link(url_for_download, message.chat.id)
+		bot.edit_message_text(f"50%", chat_id=message.chat.id, message_id=t1.message_id) 
+		path = eng.convert_to_mp3(fake_name, title, None, None)
+		size = getsize(path) / 1024 / 1024
+		if size > 30:
+			bot.edit_message_text(f"Can't load this song.", chat_id=message.chat.id, message_id=t1.message_id)
+		else:
+			f = open(path, 'rb')
+			bot.edit_message_text(f"75%", chat_id=message.chat.id, message_id=t1.message_id)
 			try:
-				if start[0][1].find('.') == -1:
-					start_time: int = int(start[1])    
-				else:
-					parsed_time = start[0][1].split('.')
-					start_time = int(parsed_time[0]) * 60 + int(parsed_time[1])
-			except IndexError:
-				message.text = f"Error in arguments."
-				bot.send_message(message.chat.id, message.text)
-		else:
-			start_time = None
-		if len(finish) != 0:
-			try:
-				if finish[0][1].find('.') == -1:
-					end_time: int = int(finish[0][1])
-				else:
-					parsed_time = finish[0][1].split('.')
-					end_time = int(parsed_time[0]) * 60 + int(parsed_time[1])
-			except IndexError:
-				message.text = f"Error in arguments."
-				bot.send_message(message.chat.id, message.text)
-		else:
-			end_time = None
-		print(f"parsed args - start_time {start_time} end_time {end_time}")
-		url_for_download = url[0]
-		if db.check_exist_file(url_for_download):
-			fileid = db.select_by_url(url_for_download)
-			bot.send_audio(message.chat.id, fileid[0], None, timeout = 5)
-		else:
-			t1 = bot.send_message(message.chat.id, f"0%")
-			bot.edit_message_text(f"25%", chat_id=message.chat.id, message_id=t1.message_id)
-			fake_name, title = eng.download_by_link(url_for_download, message.chat.id)
-			bot.edit_message_text(f"50%", chat_id=message.chat.id, message_id=t1.message_id) 
-			path = eng.convert_to_mp3(fake_name, title, start_time, end_time)
-			size = getsize(path) / 1024 / 1024
-			if size > 30:
-				bot.edit_message_text(f"Can't load this song.", chat_id=message.chat.id, message_id=t1.message_id)
-			else:
-				f = open(path, 'rb')
-				bot.edit_message_text(f"75%", chat_id=message.chat.id, message_id=t1.message_id)
-				try:
-					msg = bot.send_audio(message.chat.id, f, None, timeout = 60)
-					bot.edit_message_text(f"100%", chat_id=message.chat.id, message_id=t1.message_id)
-					db.add_file(file_id=msg.audio.file_id, file_name=path, url=url)
-					pass
-				except Exception:
-					bot.edit_message_text(f"TimeOut.", chat_id=message.chat.id, message_id=t1.message_id)
-					pass
-				eng.remove_file(path)
-
+				msg = bot.send_audio(message.chat.id, f, None, timeout = 60)
+				bot.edit_message_text(f"100%", chat_id=message.chat.id, message_id=t1.message_id)
+				db.add_file(file_id=msg.audio.file_id, file_name=path, url=url)
+				pass
+			except Exception:
+				bot.edit_message_text(f"TimeOut.", chat_id=message.chat.id, message_id=t1.message_id)
+				pass
+			eng.remove_file(path)
 
 if __name__ == '__main__':
-	while True:
-		try:
-			bot.polling(none_stop = True)
-		except Exception:
-			print(f"bot has been falling")
-			time.sleep(5)
+	try:
+		bot.polling(none_stop = True)
+	except Exception as e :
+		print(f"bot has been falling {e}")
+		time.sleep(5)
