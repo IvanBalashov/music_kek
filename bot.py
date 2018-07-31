@@ -45,14 +45,14 @@ def test_method(message):
 @bot.callback_query_handler(func=lambda call: True)
 def callback_handler(call):
 	if call.message:
-		print(f"call.message - {call.data}")
+		print(f"call.message - {call.data}\ncall - {call}")
 		if call.data == "part":
 			keyboard = types.InlineKeyboardMarkup()
-			start = types.InlineKeyboardButton(text="start", callback_data="start")
-			finnish = types.InlineKeyboardButton(text="finnish", callback_data="fin")
+			start = types.InlineKeyboardButton(text="start", callback_data=f"start_{call.message.text}")
+			finnish = types.InlineKeyboardButton(text="finnish", callback_data=f"fin_{call.message.text}")
 			keyboard.add(start)
 			keyboard.add(finnish)
-			bot.send_message(call.message.chat.id, "plz write timing", reply_markup=keyboard)
+			bot.send_message(call.message.chat.id, "don't work)", reply_markup=keyboard)
 		url = re.findall(r'https://www.youtube.com/watch\?v\=[0-9A-Za-z\_\-]{11}|https://youtu.be/[0-9A-Za-z\_\-]{11}', call.data)
 		if len(url) != 0:
 				bot.send_message(call.message.chat.id, "ok")
