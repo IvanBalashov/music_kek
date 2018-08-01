@@ -3,6 +3,7 @@ import time
 import re
 from os.path import getsize
 import eng
+from pydub import AudioSegment
 from data.config import bot_token
 from data.config import database_name
 from telebot import types
@@ -125,7 +126,20 @@ def download_music(message, url, start=None, finish=None):
 		path = eng.convert_to_mp3(fake_name, title, start, finish)
 		size = getsize(path) / 1024 / 1024
 		if size > 30:
-			bot.edit_message_text(f"Can't load this song.", chat_id=message.chat.id, message_id=t1.message_id)
+			sound = AudioSegment.from_mp3(path)
+			half_len = len(sound) / 2 
+			first_part = sound[:half_len]
+			new_name = path.split(".")
+			first_part.export(f"{new_name[0]}_1.mp3", format="mp3")
+			second_part = sound[half_len:]
+			second_part.export(f"{new_name[0]}_2.mp3", format="mp3")
+			try:
+				f = open(f"{new_name[0]}_1.mp3", 'rb')
+				msg = bot.send_audio(message.chat.id, f, None, timeout = 60)
+				f = open(f"{new_name[0]}_2.mp3", 'rb')
+				msg = bot.send_audio(message.chat.id, f, None, timeout = 60)
+			except Exception as e:
+				bot.edit_message_text(f"Can't load this song.", chat_id=message.chat.id, message_id=t1.message_id)
 		else:	
 			f = open(path, 'rb')
 			bot.edit_message_text(f"75%", chat_id=message.chat.id, message_id=t1.message_id)
@@ -165,9 +179,8 @@ def validate_time(time):
 	return seconds
 
 if __name__ == '__main__':
-	while(True):
-		try:
-			bot.polling(none_stop = True)
-		except Exception as e:
-			print(f"bot has been falling {e}")
-			time.sleep(5)
+	try:
+		bot.polling(none_stop = True)
+	except Exception as e:
+		print(f"bot has been falling {e}")
+		time.sleep(5)
