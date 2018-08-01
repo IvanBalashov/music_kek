@@ -129,7 +129,7 @@ def download_music(message, url, start=None, finish=None):
 			except Exception as e:
 				bot.edit_message_text(f"TimeOut {e}", chat_id=message.chat.id, message_id=t1.message_id)
 				pass
-			eng.remove_file(path)
+			eng.remove_file(path[0])
 		else:
 			for chunk in path:
 				f = open(chunk, 'rb')
