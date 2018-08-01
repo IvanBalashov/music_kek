@@ -13,7 +13,7 @@ def download_by_link(link: str, videoid: str) -> [str, str]:
 	ydl_opts = {
 #		'quiet': True,
 		'no_warnings': True,
-		'format': "bestaudio/best",
+		'format': "best",
 		'outtmpl': '%(name)s' + str(videoid) + '.%(ext)s',
 		'postprocessor': [{
 			'key': "FFmpegExtractAudioPP",
