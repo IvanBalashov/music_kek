@@ -60,7 +60,7 @@ def convert_to_mp3(filename: str, title: str, start: int=None, end: int=None) ->
 	run(args)
 	size = getsize(file_b) / 1024 / 1024
 	print(f"size - {size}")
-	if size < 30:
+	if size > 30:
 		args = ["ffprobe","-show_entries", "format=duration", "-i", file_b]
 		popen = subprocess.Popen(args, stdout=subprocess.PIPE)
 		popen.wait()
@@ -68,7 +68,7 @@ def convert_to_mp3(filename: str, title: str, start: int=None, end: int=None) ->
 		dur = re.findall(r"\d{1,10}", str(output))
 		count_chunks = int(dur[0]) // 600
 		print(f"count_chunks - {count_chunks}")
-		for chunk_start_time in range(0, count_chunks + 1):
+		for chunk_start_time in range(0, count_chunks):
 			args = [
 				"/usr/bin/ffmpeg",
 				"-i",
