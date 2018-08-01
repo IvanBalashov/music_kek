@@ -133,9 +133,8 @@ def download_music(message, url, start=None, finish=None):
 				msg = bot.send_audio(message.chat.id, f, None, timeout = 60)
 				bot.edit_message_text(f"100%", chat_id=message.chat.id, message_id=t1.message_id)
 				db.add_file(file_id=msg.audio.file_id, file_name=path, url=url)
-				pass
-			except Exception:
-				bot.edit_message_text(f"TimeOut.", chat_id=message.chat.id, message_id=t1.message_id)
+			except Exception as e:
+				bot.edit_message_text(f"TimeOut {e}", chat_id=message.chat.id, message_id=t1.message_id)
 				pass
 			eng.remove_file(path)
 
@@ -166,8 +165,9 @@ def validate_time(time):
 	return seconds
 
 if __name__ == '__main__':
-	try:
-		bot.polling(none_stop = True)
-	except Exception as e:
-		print(f"bot has been falling {e}")
-		time.sleep(5)
+	while(True)
+		try:
+			bot.polling(none_stop = True)
+		except Exception as e:
+			print(f"bot has been falling {e}")
+			time.sleep(5)
