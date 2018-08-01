@@ -165,7 +165,7 @@ def validate_time(time):
 	return seconds
 
 if __name__ == '__main__':
-	while(True)
+	while(True):
 		try:
 			bot.polling(none_stop = True)
 		except Exception as e:
