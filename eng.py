@@ -44,7 +44,7 @@ def convert_to_mp3(filename: str, title: str, start: int=None, end: int=None) ->
 	meta = f"-metadata"
 	newtitle = f"title={title}"
 	newauthor = f"artist={title}"
-	file_a = f"{path_to_wrk_dir}{filename}.webm"
+	file_a = f"{path_to_wrk_dir}{filename}.mp4"
 	args = ["/usr/bin/ffmpeg","-i", file_a, "-acodec", "libmp3lame"]		
 	if start is not None and start != 0:
 		args = args + ["-ss", str(start)]
@@ -66,7 +66,7 @@ def convert_to_mp3(filename: str, title: str, start: int=None, end: int=None) ->
 		popen.wait()
 		output = popen.stdout.read()
 		dur = re.findall(r"\d{1,10}", str(output))
-		count_chunks = int(dur[0]) // 600
+		count_chunks = (int(dur[0]) // 600) + 1
 		print(f"count_chunks - {count_chunks}")
 		for chunk_start_time in range(0, count_chunks):
 			args = [
@@ -76,7 +76,7 @@ def convert_to_mp3(filename: str, title: str, start: int=None, end: int=None) ->
 				"-ss",
 				f"{chunk_start_time * 600}",
 				"-t",
-				f"600",
+				"600",
 				"-acodec",
 				"copy",
 				f"{path_to_wrk_dir}{title}_{chunk_start_time}.mp3",
