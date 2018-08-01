@@ -3,14 +3,14 @@ import youtube_dl
 import re
 import subprocess
 from subprocess import run
-from os import listdir, remove, devnull
+from os import listdir, remove, devnull, getsize
 from os.path import isfile, join
 from data.config import path_to_wrk_dir
 
 def download_by_link(link: str, videoid: str) -> [str, str]:
 	"""This method is setup youtube_dl for downlad video"""
 	ydl_opts = {
-		'quiet': True,
+#		'quiet': True,
 		'no_warnings': True,
 		'format': 'bestaudio/best',
 		'outtmpl': '%(name)s' + str(videoid) + '.%(ext)s',
@@ -51,12 +51,15 @@ def convert_to_mp3(filename: str, title: str, start: int=None, end: int=None) ->
 		args = args + ['-ss', str(start)]
 	if end is not None and end != 0:
 		args = args + ['-t', str(end - start)]
-	args = args + [meta, newtitle, meta, newauthor, '-aq', '0', fileB]
-	try:
-		run(args)
-	except Exception:
-		run(['/usr/bin/ffmpeg','-i', fileA, '-acodec', 'libmp3lame', \
-			meta, newtitle, meta, newauthor, arg_to_start, arg_to_end, '-aq', '0', fileB])
+	args = args + [meta, newtitle, meta, newauthor,]
+	size = getsize(fileA) / 1024 / 1024
+	if size > 30:
+		args = args + ['-aq', '3', fileB]
+	else:
+		args = args + ['-aq', '0', fileB]
+
+	run(args)
+
 	try:
 		remove(fileA)
 	except FileNotFoundError:

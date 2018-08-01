@@ -126,6 +126,7 @@ def download_music(message, url, start=None, finish=None):
 		path = eng.convert_to_mp3(fake_name, title, start, finish)
 		size = getsize(path) / 1024 / 1024
 		if size > 30:
+			print(f"started devide")
 			sound = AudioSegment.from_mp3(path)
 			half_len = len(sound) / 2 
 			first_part = sound[:half_len]
@@ -136,8 +137,10 @@ def download_music(message, url, start=None, finish=None):
 			try:
 				f = open(f"{new_name[0]}_1.mp3", 'rb')
 				msg = bot.send_audio(message.chat.id, f, None, timeout = 60)
+				eng.remove_file(f"{new_name[0]}_1.mp3")
 				f = open(f"{new_name[0]}_2.mp3", 'rb')
 				msg = bot.send_audio(message.chat.id, f, None, timeout = 60)
+				eng.remove_file(f"{new_name[0]}_2.mp3")
 			except Exception as e:
 				bot.edit_message_text(f"Can't load this song.", chat_id=message.chat.id, message_id=t1.message_id)
 		else:	
