@@ -170,8 +170,9 @@ def validate_time(time):
 	return seconds
 
 if __name__ == '__main__':
-	try:
-		bot.polling(none_stop = True)
-	except Exception as e:
-		print(f"bot has been falling {e}")
-		time.sleep(5)
+	while(True):
+		try:
+			bot.polling(none_stop = True)
+		except Exception as e:
+			print(f"bot has been falling {e}")
+			time.sleep(5)
