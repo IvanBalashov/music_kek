@@ -53,10 +53,10 @@ def convert_to_mp3(filename: str, title: str, start: int=None, end: int=None) ->
 	args = args + [meta, newtitle, meta, newauthor,]
 	size = getsize(file_a) / 1024 / 1024
 	print(f"size - {size}")
-	if size > 3:
+	if size > 30:
 		args = args + ["-aq", "3", file_b]
 	else:
-		args = args + ['-aq', '0', file_b]
+		args = args + ["-aq", "0", file_b]
 	run(args)
 	size = getsize(file_b) / 1024 / 1024
 	print(f"size - {size}")
