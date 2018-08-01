@@ -160,7 +160,7 @@ def validate_time(time):
 	if time.find('.') == -1:
 		return int(time)
 	else:
-		splited_time = i.split('.')
+		splited_time = time.split('.')
 		seconds = int(splited_time[0]) * 60 + int(splited_time[1])
 	return seconds
 
