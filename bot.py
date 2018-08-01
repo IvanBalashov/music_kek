@@ -74,11 +74,6 @@ def callback_handler(call):
 				download_music(call.message, url, None, None)
 				remove_from_state(call.message.from_user.id)
 				time.sleep(3)
-		elif call.data.find("time") != -1:
-			try:
-				dataid = int(result[1])
-			except Exception as e:
-				bot.send_message(call.message.chat.id, f"what's wrong with this REBYATISHKI - {e}")
 
 @bot.message_handler(content_types=["text"])
 def get_music(message):
@@ -124,27 +119,8 @@ def download_music(message, url, start=None, finish=None):
 		fake_name, title = eng.download_by_link(url_for_download, message.chat.id)
 		bot.edit_message_text(f"50%", chat_id=message.chat.id, message_id=t1.message_id) 
 		path = eng.convert_to_mp3(fake_name, title, start, finish)
-		size = getsize(path) / 1024 / 1024
-		if size > 30:
-			print(f"started devide")
-			sound = AudioSegment.from_mp3(path)
-			half_len = len(sound) / 2 
-			first_part = sound[:half_len]
-			new_name = path.split(".")
-			first_part.export(f"{new_name[0]}_1.mp3", format="mp3")
-			second_part = sound[half_len:]
-			second_part.export(f"{new_name[0]}_2.mp3", format="mp3")
-			try:
-				f = open(f"{new_name[0]}_1.mp3", 'rb')
-				msg = bot.send_audio(message.chat.id, f, None, timeout = 60)
-				eng.remove_file(f"{new_name[0]}_1.mp3")
-				f = open(f"{new_name[0]}_2.mp3", 'rb')
-				msg = bot.send_audio(message.chat.id, f, None, timeout = 60)
-				eng.remove_file(f"{new_name[0]}_2.mp3")
-			except Exception as e:
-				bot.edit_message_text(f"Can't load this song.", chat_id=message.chat.id, message_id=t1.message_id)
-		else:	
-			f = open(path, 'rb')
+		if len(path) == 1:
+			f = open(path[0], 'rb')
 			bot.edit_message_text(f"75%", chat_id=message.chat.id, message_id=t1.message_id)
 			try:
 				msg = bot.send_audio(message.chat.id, f, None, timeout = 60)
@@ -154,6 +130,18 @@ def download_music(message, url, start=None, finish=None):
 				bot.edit_message_text(f"TimeOut {e}", chat_id=message.chat.id, message_id=t1.message_id)
 				pass
 			eng.remove_file(path)
+		else:
+			for chunk in path:
+				f = open(chunk, 'rb')
+				bot.edit_message_text(f"75%", chat_id=message.chat.id, message_id=t1.message_id)
+				try:
+					msg = bot.send_audio(message.chat.id, f, None, timeout = 60)
+					bot.edit_message_text(f"100%", chat_id=message.chat.id, message_id=t1.message_id)
+					db.add_file(file_id=msg.audio.file_id, file_name=path, url=url)
+				except Exception as e:
+					bot.edit_message_text(f"TimeOut {e}", chat_id=message.chat.id, message_id=t1.message_id)
+					pass
+				eng.remove_file(chunk)
 
 def find_obj_in_state(uid):
 	f_obj = [x for x in state if x['u_id'] == uid]
