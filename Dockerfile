@@ -1,6 +1,7 @@
 # docker build -t ubuntu1604py36
 FROM ubuntu:latest
 
+RUN echo "nameserver 8.8.8.8" >/etc/resolv.conf
 RUN echo "deb http://ppa.launchpad.net/jonathonf/python-3.6/ubuntu xenial main" >/etc/apt/sources.list.d/jonathonf-ubuntu-python-3_6-xenial.list \
 && apt-key adv --keyserver ipv4.pool.sks-keyservers.net --recv-keys 8CF63AD3F06FC659 \
 && apt-get update \
