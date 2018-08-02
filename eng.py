@@ -69,7 +69,7 @@ def convert_to_mp3(filename: str, title: str, start: int=None, end: int=None) ->
 	popen.wait()
 	size = getsize(file_b) / 1024 / 1024
 	print(f"size - {size}, args - {args}")
-	if size > 30:
+	if size > 30 and start or end is None:
 		args = [
 			"ffprobe",
 			"-show_entries",
