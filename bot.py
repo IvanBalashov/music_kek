@@ -131,7 +131,7 @@ def download_music(message, url, start=None, finish=None):
 				pass
 			eng.remove_file(path[0])
 		else:
-			for chunk in path:
+			for chunk in reversed(path):
 				f = open(chunk, 'rb')
 				bot.edit_message_text(f"75%", chat_id=message.chat.id, message_id=t1.message_id)
 				try:
