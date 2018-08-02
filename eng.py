@@ -33,30 +33,50 @@ def download_by_link(link: str, videoid: str) -> [str, str]:
 def translate(inp: str) -> str:
 	"""This is strange method for retranslate cirylic symbols in latin.
 	   Stolen from stackoverflow)."""
-	symbols =(u"абвгдеёжзийклмнопрстуфхцчшщъыьэюяАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ",
+	symbols = (u"абвгдеёжзийклмнопрстуфхцчшщъыьэюяАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ",
 			u"abvgdeejzijklmnoprstufhzcss_y_euaABVGDEEJZIJKLMNOPRSTUFHZCSS_Y_EUA")
 	tr = {ord(a):ord(b) for a, b in zip(*symbols)}
 	output = inp.translate(tr)
 	return output
 
 def convert_to_mp3(filename: str, title: str, start: int=None, end: int=None) -> str:
+	file_a = f"{path_to_wrk_dir}{filename}.webm"
 	file_b = f"{path_to_wrk_dir}{title}.mp3"
 	files_b = []
-	meta = f"-metadata"
-	newtitle = f"title={title}"
-	newauthor = f"artist={title}"
-	file_a = f"{path_to_wrk_dir}{filename}.webm"
-	args = ["/usr/bin/ffmpeg","-i", file_a, "-acodec", "libmp3lame"]		
+	args = [
+		"/usr/bin/ffmpeg",
+		"-i",
+		file_a,
+		"-acodec",
+		"libmp3lame",
+		]
+
 	if start is not None and start != 0:
 		args = args + ["-ss", str(start)]
 	if end is not None and end != 0:
 		args = args + ["-t", str(end - start)]
-	args = args + [meta, newtitle, meta, newauthor,"-aq", "0", file_b]
-	run(args)
+
+	args = args + [
+		"-metadata",
+		f"title={title}",
+		"-metadata",
+		f"artist={title}",
+		"-aq",
+		"0",
+		file_b,
+		]
+	popen = subprocess.Popen(args)
+	popen.wait()
 	size = getsize(file_b) / 1024 / 1024
-	print(f"size - {size}")
+	print(f"size - {size}, args - {args}")
 	if size > 30:
-		args = ["ffprobe","-show_entries", "format=duration", "-i", file_b]
+		args = [
+			"ffprobe",
+			"-show_entries",
+			"format=duration",
+			"-i",
+			file_b,
+			]
 		popen = subprocess.Popen(args, stdout=subprocess.PIPE)
 		popen.wait()
 		output = popen.stdout.read()
