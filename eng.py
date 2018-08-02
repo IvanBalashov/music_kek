@@ -13,7 +13,8 @@ def download_by_link(link: str, videoid: str) -> [str, str]:
 	ydl_opts = {
 #		'quiet': True,
 		'no_warnings': True,
-		'format': "best",
+		'format': "bestaudio/best",
+		'format': 'webm',
 		'outtmpl': '%(name)s' + str(videoid) + '.%(ext)s',
 		'postprocessor': [{
 			'key': "FFmpegExtractAudioPP",
@@ -44,7 +45,7 @@ def convert_to_mp3(filename: str, title: str, start: int=None, end: int=None) ->
 	meta = f"-metadata"
 	newtitle = f"title={title}"
 	newauthor = f"artist={title}"
-	file_a = f"{path_to_wrk_dir}{filename}.mp4"
+	file_a = f"{path_to_wrk_dir}{filename}.webm"
 	args = ["/usr/bin/ffmpeg","-i", file_a, "-acodec", "libmp3lame"]		
 	if start is not None and start != 0:
 		args = args + ["-ss", str(start)]
