@@ -62,11 +62,11 @@ def convert_to_mp3(filename: str, title: str, start: int=None, end: int=None) ->
 		f"title={title}",
 		"-metadata",
 		f"artist={title}",
-		"-aq",
-		"0",
+		"-b:a",
+		"320",
 		file_b,
 		]
-	popen = subprocess.Popen(args, stdout=devnull)
+	popen = subprocess.Popen(args)
 	popen.wait()
 	size = getsize(file_b) / 1024 / 1024
 	if size > 30 and start or end is None:
