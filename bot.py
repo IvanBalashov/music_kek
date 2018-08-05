@@ -1,16 +1,18 @@
 import telebot
 import time
 import re
-from os.path import getsize
 import eng
+from os.path import getsize
 from pydub import AudioSegment
 from data.config import bot_token
 from data.config import database_name
 from telebot import types
+from store import StoreController
 from database import SQLighter
 
 bot = telebot.TeleBot(bot_token)
 db = SQLighter(database_name)
+store = StoreController(host='localhost', port=637)
 valid_url = r'https://www.youtube.com/watch\?v\=[0-9A-Za-z\_\-]{11}|https://youtu.be/[0-9A-Za-z\_\-]{11}'
 start_fin = r'(\d{1,2}\.\d{1,2}|\d{1,2})\s(\d{1,2}\.\d{1,2}|\d{1,2})'
 state = []
@@ -20,9 +22,14 @@ def start(message):
 	message.text = f"Привет. Я простой бот который может скачать\
 				твой любимый трек с youtube. Для того чтоб научиться мной\
 				пользоваться введи /help."
-	state.append({'chat_id':message.chat.id,
-				  'u_id':message.from_user.id,
-				  'data':message.text})
+	print(f"message - {message}")
+	state.append({'chat_id': message.chat.id,
+				  'u_id': message.from_user.id,
+				  'data': message.text})
+	store.save_data_in_store('test',
+				 {'chat_id': message.chat.id,
+				  'u_id': message.from_user.id,
+				  'data': message.text})
 	bot.send_message(message.chat.id, message.text)
 
 @bot.message_handler(commands=['help'])
@@ -32,16 +39,10 @@ def start(message):
 		аудиодорожку и ждать) да, пока что сервис работает не очень\
 		быстро, но в дальнейшем разработчик все поправит"
 	remove_from_state(message.from_user.id)
-	state.append({'chat_id':message.chat.id,
-				  'u_id':message.from_user.id,
-				  'data':message.text})
+	state.append({'chat_id': message.chat.id,
+				  'u_id': message.from_user.id,
+				  'data': message.text})
 	bot.send_message(message.chat.id, message.text)
-
-@bot.message_handler(commands=['url'])
-def get_url(message):
-	new_message = message
-	new_message.message_id = message.message_id + 1
-	download_music(new_message)
 
 @bot.message_handler(commands=['dw'])
 def test_method(message):
