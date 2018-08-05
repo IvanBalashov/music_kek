@@ -11,7 +11,7 @@ def download_by_link(link: str, videoid: str) -> [str, str]:
 	"""This method is setup youtube_dl for downlad video"""
 	print(f"link - {link}")
 	ydl_opts = {
-#		'quiet': True,
+		'quiet': True,
 		'no_warnings': True,
 		'format': "bestaudio/best",
 		'format': 'webm',
@@ -39,7 +39,8 @@ def translate(inp: str) -> str:
 	output = inp.translate(tr)
 	return output
 
-def convert_to_mp3(filename: str, title: str, start: int=None, end: int=None) -> str:
+def convert_to_mp3(filename: str, title: str, start: int=None, end: int=None) -> list:
+	"""core func for encode webm files to mp3"""
 	file_a = f"{path_to_wrk_dir}{filename}.webm"
 	file_b = f"{path_to_wrk_dir}{title}.mp3"
 	files_b = []
@@ -65,10 +66,9 @@ def convert_to_mp3(filename: str, title: str, start: int=None, end: int=None) ->
 		"0",
 		file_b,
 		]
-	popen = subprocess.Popen(args)
+	popen = subprocess.Popen(args, stdout=devnull)
 	popen.wait()
 	size = getsize(file_b) / 1024 / 1024
-	print(f"size - {size}, args - {args}")
 	if size > 30 and start or end is None:
 		args = [
 			"ffprobe",

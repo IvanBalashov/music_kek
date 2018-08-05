@@ -14,7 +14,6 @@ db = SQLighter(database_name)
 store = StoreController('rejson', 6379)
 valid_url = r'https://www.youtube.com/watch\?v\=[0-9A-Za-z\_\-]{11}|https://youtu.be/[0-9A-Za-z\_\-]{11}'
 start_fin = r'(\d{1,2}\.\d{1,2}|\d{1,2})\s(\d{1,2}\.\d{1,2}|\d{1,2})'
-state = []
 
 @bot.message_handler(commands=['start'])
 def start(message):
@@ -25,7 +24,7 @@ def start(message):
 	store.save_data_in_store(message.from_user.username,
 				 {'chat_id': message.chat.id,
 				  'u_id': message.from_user.id,
-				  'data': message.text})
+				  'data': message.text}):
 	bot.send_message(message.chat.id, message.text)
 
 @bot.message_handler(commands=['help'])
@@ -34,7 +33,7 @@ def start(message):
 		....отправить мне ссылку на видео из которого ты хочешь достать\
 		аудиодорожку и ждать) да, пока что сервис работает не очень\
 		быстро, но в дальнейшем разработчик все поправит"
-	remove_from_state(message.from_user.id)
+	store.delete_data_in_store(message.from_user.username)
 	store.save_data_in_store(message.from_user.username,
 				 {'chat_id': message.chat.id,
 				  'u_id': message.from_user.id,
@@ -63,7 +62,6 @@ def callback_handler(call):
 		if call.data.find("cancel") != -1:
 			bot.send_message(call.message.chat.id, f"cancel")
 			store.delete_data_in_store(call.message.from_user.username)
-			print(f"cancel_state - {state}")
 			return
 		result = call.data.split(",")
 		url = re.findall(valid_url, result[1])
@@ -87,7 +85,7 @@ def get_music(message):
 		download_music(message, url)
 		time.sleep(3)
 	elif len(download_time) != 0:
-		finded_obj = store.get_field_data_in_store(message.from_user.username, data)
+		finded_obj = store.get_field_data_in_store(message.from_user.username, 'data')
 		print(f"finded-obj - {finded_obj}")
 		if finded_obj is None:
 			bot.send_message(message.chat.id, "haven't url for download")
@@ -107,7 +105,7 @@ def get_music(message):
 		else:
 			bot.send_message(message.chat.id, "write 2 numbers plz.")
 		download_music(message, url, times[0], times[1])
-		remove_from_state(message.from_user.id)
+		store.delete_data_in_store(message.from_user.username)
 	else:
 		bot.send_message(message.chat.id, "don't understand u")
 
@@ -145,24 +143,6 @@ def download_music(message, url, start=None, finish=None):
 					bot.edit_message_text(f"TimeOut {e}", chat_id=message.chat.id, message_id=t1.message_id)
 					pass
 				eng.remove_file(chunk)
-
-def find_obj_in_state(uid):
-	f_obj = [x for x in state if x['u_id'] == uid]
-	if len(f_obj) == 0:
-		return None
-	else:
-		return f_obj[0]
-
-def update_state(obj):
-	remove_from_state(obj['u_id'])
-	state.append(obj)
-
-def remove_from_state(uid):
-	rem_obj = [x for x in state if x['chat_id'] == uid]
-	try:
-		state.remove(rem_obj[0])
-	except Exception as e:
-		print(f"can't remove obj from state - {e}")
 
 def validate_time(time):
 	if time.find('.') == -1:
