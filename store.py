@@ -10,7 +10,9 @@ class StoreController(object):
 	def save_data_in_store(self, saved_name, data):
 		"""save data in to redis"""
 		try:
-			self.red.execute_command('JSON.SET', saved_name, '.', json.dumps(data))
+			print(f"data -  {data}")
+			info = self.red.execute_command('JSON.SET', saved_name, '.', json.dumps(data))
+			print(f"after execute - {info}")
 		except Exception as e:
 			print(f"exception in save_data_in_store - {e}")
 
@@ -42,3 +44,4 @@ class StoreController(object):
 				return count
 		except Exception:
 			return None
+			

@@ -3,7 +3,6 @@ import time
 import re
 import eng
 from os.path import getsize
-from pydub import AudioSegment
 from data.config import bot_token
 from data.config import database_name
 from telebot import types
@@ -12,7 +11,7 @@ from database import SQLighter
 
 bot = telebot.TeleBot(bot_token)
 db = SQLighter(database_name)
-store = StoreController(host='localhost', port=637)
+store = StoreController('127.0.0.1', 6400)
 valid_url = r'https://www.youtube.com/watch\?v\=[0-9A-Za-z\_\-]{11}|https://youtu.be/[0-9A-Za-z\_\-]{11}'
 start_fin = r'(\d{1,2}\.\d{1,2}|\d{1,2})\s(\d{1,2}\.\d{1,2}|\d{1,2})'
 state = []
@@ -22,14 +21,14 @@ def start(message):
 	message.text = f"Привет. Я простой бот который может скачать\
 				твой любимый трек с youtube. Для того чтоб научиться мной\
 				пользоваться введи /help."
-	print(f"message - {message}")
+	print(f"message - {message.from_user}")
 	state.append({'chat_id': message.chat.id,
 				  'u_id': message.from_user.id,
 				  'data': message.text})
 	store.save_data_in_store('test',
 				 {'chat_id': message.chat.id,
 				  'u_id': message.from_user.id,
-				  'data': message.text})
+				  'data': "test"})
 	bot.send_message(message.chat.id, message.text)
 
 @bot.message_handler(commands=['help'])
@@ -171,9 +170,8 @@ def validate_time(time):
 	return seconds
 
 if __name__ == '__main__':
-	while(True):
-		try:
-			bot.polling(none_stop = True)
-		except Exception as e:
-			print(f"bot has been falling {e}")
-			time.sleep(5)
+	try:
+		bot.polling(none_stop = True)
+	except Exception as e:
+		print(f"bot has been falling {e}")
+		time.sleep(5)
