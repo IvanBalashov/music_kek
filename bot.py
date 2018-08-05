@@ -24,7 +24,7 @@ def start(message):
 	store.save_data_in_store(message.from_user.username,
 				 {'chat_id': message.chat.id,
 				  'u_id': message.from_user.id,
-				  'data': message.text}):
+				  'data': message.text})
 	bot.send_message(message.chat.id, message.text)
 
 @bot.message_handler(commands=['help'])
