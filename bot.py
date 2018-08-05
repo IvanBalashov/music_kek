@@ -22,9 +22,6 @@ def start(message):
 				твой любимый трек с youtube. Для того чтоб научиться мной\
 				пользоваться введи /help."
 	print(f"message - {message.from_user}")
-	state.append({'chat_id': message.chat.id,
-				  'u_id': message.from_user.id,
-				  'data': message.text})
 	store.save_data_in_store(message.from_user.username,
 				 {'chat_id': message.chat.id,
 				  'u_id': message.from_user.id,
@@ -38,7 +35,8 @@ def start(message):
 		аудиодорожку и ждать) да, пока что сервис работает не очень\
 		быстро, но в дальнейшем разработчик все поправит"
 	remove_from_state(message.from_user.id)
-	state.append({'chat_id': message.chat.id,
+	store.save_data_in_store(message.from_user.username,
+				 {'chat_id': message.chat.id,
 				  'u_id': message.from_user.id,
 				  'data': message.text})
 	bot.send_message(message.chat.id, message.text)
@@ -52,7 +50,11 @@ def test_method(message):
 	keyboard.add(full)
 	keyboard.add(part)
 	keyboard.add(cancel)
-	update_state({'chat_id': message.chat.id, 'u_id': message.from_user.id, 'data': message.text})
+	store.delete_data_in_store(message.from_user.username)
+	store.save_data_in_store(message.from_user.username,
+				 {'chat_id': message.chat.id,
+				  'u_id': message.from_user.id,
+				  'data': message.text})
 	bot.send_message(message.chat.id, "Which type of download u want?", reply_markup=keyboard)
 
 @bot.callback_query_handler(func=lambda call: True)
@@ -60,7 +62,7 @@ def callback_handler(call):
 	if call.message:
 		if call.data.find("cancel") != -1:
 			bot.send_message(call.message.chat.id, f"cancel")
-			remove_from_state(call.message.chat.id)
+			store.delete_data_in_store(call.message.from_user.username)
 			print(f"cancel_state - {state}")
 			return
 		result = call.data.split(",")
@@ -72,7 +74,7 @@ def callback_handler(call):
 			if len(url) != 0:
 				bot.send_message(call.message.chat.id, "ok")
 				download_music(call.message, url, None, None)
-				remove_from_state(call.message.from_user.id)
+				store.delete_data_in_store(call.message.from_user.username)
 				time.sleep(3)
 
 @bot.message_handler(content_types=["text"])
@@ -85,7 +87,8 @@ def get_music(message):
 		download_music(message, url)
 		time.sleep(3)
 	elif len(download_time) != 0:
-		finded_obj = find_obj_in_state(message.from_user.id)
+		finded_obj = store.get_field_data_in_store(message.from_user.username, data)
+		print(f"finded-obj - {finded_obj}")
 		if finded_obj is None:
 			bot.send_message(message.chat.id, "haven't url for download")
 			return

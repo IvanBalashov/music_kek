@@ -15,7 +15,7 @@ class StoreController(object):
 		except Exception as e:
 			print(f"error in connect - {e}")
 
-	def save_data_in_store(self, saved_name, data):
+	def save_data_in_store(self, saved_name, data) -> bool:
 		"""save data in to redis"""
 		if saved_name is None:
 			return False
@@ -31,8 +31,10 @@ class StoreController(object):
 		except Exception as e:
 			print(f"exception in save_data_in_store - {e}")
 
-	def get_full_obj_from_store(self, saved_name):
+	def get_full_obj_from_store(self, saved_name) -> dict:
 		"""find data in redis store and return him"""
+		if saved_name is None:
+			return None
 		try:
 			data = json.loads(self.red.execute_command('JSON.GET', saved_name))
 			return data
@@ -40,7 +42,7 @@ class StoreController(object):
 			print(f"exception in get_full_obj_from_store - {e}")
 			return None
 
-	def get_field_data_in_store(self, saved_name, field):
+	def get_field_data_in_store(self, saved_name, field) -> dict:
 		"""find field in saved_name and return his value"""
 		try:
 			data = json.loads(self.red.execute_command('JSON.GET', saved_name, '.', field))
@@ -49,8 +51,10 @@ class StoreController(object):
 			print(f"exception in get_full_obj_from_store - {e}")
 			return None
 
-	def delete_data_in_store(self, key):
+	def delete_data_in_store(self, key) -> None:
 		"""delete key:val obj from store"""
+		if key is None:
+			return None
 		try:
 			count = self.red.execute_command('JSON.DEL', key)
 			if count != 1:
