@@ -82,7 +82,6 @@ def convert_to_mp3(filename: str, title: str, start: int=None, end: int=None) ->
 		output = popen.stdout.read()
 		dur = re.findall(r"\d{1,10}", str(output))
 		count_chunks = (int(dur[0]) // 600) + 1
-		print(f"count_chunks - {count_chunks}")
 		for chunk_start_time in range(0, count_chunks):
 			args = [
 				"/usr/bin/ffmpeg",

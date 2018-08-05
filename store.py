@@ -20,13 +20,10 @@ class StoreController(object):
 		if saved_name is None:
 			return False
 		try:
-			print(f"data -  {data}")
 			info = self.red.execute_command('JSON.SET', saved_name, '.', json.dumps(data))
 			if info.decode("utf-8") == "OK":
-				print(f"info - {info}")
 				return True
 			else:
-				print(f"info - {info}")
 				return False
 		except Exception as e:
 			print(f"exception in save_data_in_store - {e}")
@@ -57,9 +54,11 @@ class StoreController(object):
 			return None
 		try:
 			count = self.red.execute_command('JSON.DEL', key)
+			print(f"deleted obj count - {count}")
 			if count != 1:
 				return None
 			else:
 				return count
-		except Exception:
+		except Exception as e:
+			print(f"exception in delete_data_in_store - {e}")
 			return None
