@@ -11,7 +11,7 @@ from database import SQLighter
 
 bot = telebot.TeleBot(bot_token)
 db = SQLighter(database_name)
-store = StoreController('127.0.0.1', 6379)
+store = StoreController('rejson', 6379)
 valid_url = r'https://www.youtube.com/watch\?v\=[0-9A-Za-z\_\-]{11}|https://youtu.be/[0-9A-Za-z\_\-]{11}'
 start_fin = r'(\d{1,2}\.\d{1,2}|\d{1,2})\s(\d{1,2}\.\d{1,2}|\d{1,2})'
 state = []
@@ -25,10 +25,10 @@ def start(message):
 	state.append({'chat_id': message.chat.id,
 				  'u_id': message.from_user.id,
 				  'data': message.text})
-	store.save_data_in_store('test',
+	store.save_data_in_store(message.from_user.username,
 				 {'chat_id': message.chat.id,
 				  'u_id': message.from_user.id,
-				  'data': "test"})
+				  'data': message.text})
 	bot.send_message(message.chat.id, message.text)
 
 @bot.message_handler(commands=['help'])

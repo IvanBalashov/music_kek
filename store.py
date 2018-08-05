@@ -4,15 +4,30 @@ import json
 class StoreController(object):
 
 	def __init__(self, my_host, my_port):
-		pool = redis.ConnectionPool(host=my_host, port=my_port, db=0)
-		self.red = redis.Redis(connection_pool=pool)
+		#pool = redis.ConnectionPool(host=my_host, port=my_port, db=0)
+		self.red = redis.Redis(host=my_host, port=my_port, db=0)
+		try:
+			info = self.red.execute_command('PING')
+			if info:
+				print(f"connected to redis server")
+			else:
+				print(f"can't connect to redis server")
+		except Exception as e:
+			print(f"error in connect - {e}")
 
 	def save_data_in_store(self, saved_name, data):
 		"""save data in to redis"""
+		if saved_name is None:
+			return False
 		try:
 			print(f"data -  {data}")
 			info = self.red.execute_command('JSON.SET', saved_name, '.', json.dumps(data))
-			print(f"after execute - {info}")
+			if info.decode("utf-8") == "OK":
+				print(f"info - {info}")
+				return True
+			else:
+				print(f"info - {info}")
+				return False
 		except Exception as e:
 			print(f"exception in save_data_in_store - {e}")
 
@@ -44,4 +59,3 @@ class StoreController(object):
 				return count
 		except Exception:
 			return None
-			
