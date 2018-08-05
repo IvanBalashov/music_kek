@@ -10,7 +10,8 @@ RUN echo "deb http://ppa.launchpad.net/jonathonf/python-3.6/ubuntu xenial main" 
 && cd /root/ \
 && git clone https://github.com/IvanBalashov/music_kek \
 && pip3.6 install virtualenv virtualenvwrapper \
-&& pip3.6 install -r /root/music_kek/requirements.txt
+&& pip3.6 install -r /root/music_kek/requirements.txt \ 
+&& apt-get install redis-tools
 
 COPY entry-point.sh /root/music_kek/
 #RUN mkdir /root/music_kek/data

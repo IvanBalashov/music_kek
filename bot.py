@@ -11,7 +11,7 @@ from database import SQLighter
 
 bot = telebot.TeleBot(bot_token)
 db = SQLighter(database_name)
-store = StoreController('127.0.0.1', 6400)
+store = StoreController('127.0.0.1', 6379)
 valid_url = r'https://www.youtube.com/watch\?v\=[0-9A-Za-z\_\-]{11}|https://youtu.be/[0-9A-Za-z\_\-]{11}'
 start_fin = r'(\d{1,2}\.\d{1,2}|\d{1,2})\s(\d{1,2}\.\d{1,2}|\d{1,2})'
 state = []
