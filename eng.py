@@ -93,6 +93,8 @@ def convert_to_mp3(filename: str, title: str, start: int=None, end: int=None) ->
 				"600",
 				"-acodec",
 				"copy",
+				"-b:a",
+				"320",
 				f"{path_to_wrk_dir}{title}_{chunk_start_time}.mp3",
 			]
 			try:
