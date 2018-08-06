@@ -63,7 +63,7 @@ def convert_to_mp3(filename: str, title: str, start: int=None, end: int=None) ->
 		"-metadata",
 		f"artist={title}",
 		"-b:a",
-		"320",
+		"320k",
 		file_b,
 		]
 	popen = subprocess.Popen(args)
@@ -94,7 +94,7 @@ def convert_to_mp3(filename: str, title: str, start: int=None, end: int=None) ->
 				"-acodec",
 				"copy",
 				"-b:a",
-				"320",
+				"320k",
 				f"{path_to_wrk_dir}{title}_{chunk_start_time}.mp3",
 			]
 			try:
