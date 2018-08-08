@@ -1,4 +1,3 @@
 fix tmp videoname - for paralel download 
-add redis stor for safe states 
 add mongodb for save info about users and music
 add playlist download
