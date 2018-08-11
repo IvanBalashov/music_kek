@@ -30,8 +30,8 @@ class DBProvider(object):
         if data is None:
             raise Exception(f"empty data for save.")
         else:
-            file_id = self.users.insert_one(data).inserted_id
-            print(f"insert_user_in_db - {file_id}")
+            user_id = self.users.insert_one(data).inserted_id
+            print(f"insert_user_in_db - {user_id}")
     
     def find_file_in_db(self, f_name):
         if f_name is None:
