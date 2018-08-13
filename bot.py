@@ -184,11 +184,13 @@ def download_music(message, url, start=None, finish=None) -> None:
 		user_msg = bot.send_message(message.chat.id, f"0%")
 		# start download and request user about start downloading
 		bot.edit_message_text(f"25%", chat_id=message.chat.id, message_id=user_msg.message_id)
+		# try to fix bug with 
+		rand_name = message.chat.id + message.from_user.id
 		# download audio and safe title, and tmp_name of file
-		tmp_file, title = eng.download_by_link(url_for_download, message.chat.id)
+		tmp_file, title = eng.download_by_link(url_for_download, rand_name)
 		# request user about start encoding
 		bot.edit_message_text(f"50%", chat_id=message.chat.id, message_id=user_msg.message_id)
-		# start comvert file
+		# start comvert file same file names
 		path = eng.convert_to_mp3(tmp_file, title, start, finish)
 		# check variable path, if len more than 1, start loop for pull all files
 		if len(path) == 1:
@@ -230,9 +232,8 @@ def download_music(message, url, start=None, finish=None) -> None:
 				eng.remove_file(chunk)
 
 def validate_time(time) -> int:
-	""" helper for validate time
-	split string by dot, summ mun and sec
- 	return sec"""
+	""" helper for validate time. split string by dot, 
+	summ mun and sec. return sec"""
 	if time.find('.') == -1:
 		return int(time)
 	else:
