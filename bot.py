@@ -185,7 +185,7 @@ def download_music(message, url, start=None, finish=None) -> None:
 		# start download and request user about start downloading
 		bot.edit_message_text(f"25%", chat_id=message.chat.id, message_id=user_msg.message_id)
 		# try to fix bug with 
-		rand_name = message.chat.id + message.from_user.id
+		rand_name = message.chat.id + message.id
 		# download audio and safe title, and tmp_name of file
 		tmp_file, title = eng.download_by_link(url_for_download, rand_name)
 		# request user about start encoding
