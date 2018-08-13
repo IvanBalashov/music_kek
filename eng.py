@@ -83,7 +83,7 @@ def convert_to_mp3(filename: str, title: str, start: int=None, end: int=None) ->
 
 	# check size file. if he more than 30 mb, bot need split him to chunks.
 	size = getsize(file_b) / 1024 / 1024
-	if size > 30 and start or end is None:
+	if size > 30 and ( start or end is None ):
 		# setup args for split to chunks
 		args = [
 			"ffprobe",
