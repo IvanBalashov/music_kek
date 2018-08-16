@@ -1,4 +1,4 @@
-from pymongo import MongoClient, ConnectionFailure
+from pymongo import MongoClient
 
 class DBProvider(object):
 # files - {'file_name': f_name,
@@ -13,7 +13,7 @@ class DBProvider(object):
 	def __init__(self, my_host, port, data_base):
 		try:
 			self.client = MongoClient(my_host, port)
-		except ConnectionFailure:
+		except Exception:
 			raise Exception(f"client can't connect to mongodb.")
 		self.db = self.client[data_base]
 		self.files = self.db.files
