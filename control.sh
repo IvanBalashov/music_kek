@@ -20,10 +20,10 @@ case $1 in
         docker rm music_kek_v0.1
         docker rmi music_kek:v0.1
         docker build -t music_kek:v0.1 ./
-        docker run --restart unless-stopped --link redis-rejson:rejson -d -v /home/music/music_kek/data/:/root/music_kek/data/ --name music_kek_v0.1 music_kek:v0.1
+        docker run --restart unless-stopped --link redis-rejson:rejson --link some-mongo:mongo -d -v /home/music/music_kek/data/:/root/music_kek/data/ --name music_kek_v0.1 music_kek:v0.1
     ;;
     "inter")
-        docker run -it --entrypoint /bin/bash --link redis-rejson:rejson -v /home/music/music_kek/data/:/root/music_kek/data/ --name music_kek_v0.1 music_kek:v0.1
+        docker run -it --entrypoint /bin/bash --link redis-rejson:rejson --link some-mongo:mongo -v /home/music/music_kek/data/:/root/music_kek/data/ --name music_kek_v0.1 music_kek:v0.1
     ;;
 esac
 

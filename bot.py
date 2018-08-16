@@ -5,18 +5,22 @@ import eng
 from os.path import getsize
 from data.config import bot_token
 from data.config import database_name
+from data.config import rejson_host
+from data.config import rejson_port
 from telebot import types
 from store import StoreController
 from database import SQLighter
+from dbmongo import DBProvider
 
 # bot object - core for this bot.
 bot = telebot.TeleBot(bot_token)
 # now here sqlite
+provider = DBProvider("mongo", 27017, "test-base")
 db = SQLighter(database_name)
 # used redis_json for save states
 # need this, coz bot down after timeout.
 # TODO: write worker for work with states after bot fall.
-store = StoreController('rejson', 6379)
+store = StoreController(rejson_host, rejson_port)
 # two regex for validate youtube urls, and timecode.
 valid_url = r'https://www.youtube.com/watch\?v\=[0-9A-Za-z\_\-]{11}|https://youtu.be/[0-9A-Za-z\_\-]{11}'
 start_fin = r'(\d{1,2}\.\d{1,2}|\d{1,2})\s(\d{1,2}\.\d{1,2}|\d{1,2})'
