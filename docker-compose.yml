@@ -1,0 +1,29 @@
+version: '3'
+services:
+  bot:
+    image: music_kek:v0.1
+    networks:
+      - outside
+    ports: 
+      - 80:80
+      - 443:443
+    volumes:
+      - '/home/music/music_kek/data/:/root/music_kek/data/'
+    hostname: bot
+
+  rejson:
+    image: redislabs/rejson
+    networks:
+      - outside
+    hostname: rejson
+
+  mongo:
+    image: mongo
+    networks:
+      - outside
+    hostname: mongo
+
+networks:
+  outside:
+    external:
+      name: user-bridge

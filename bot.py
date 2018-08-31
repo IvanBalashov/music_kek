@@ -29,13 +29,15 @@ start_fin = r'(\d{1,2}\.\d{1,2}|\d{1,2})\s(\d{1,2}\.\d{1,2}|\d{1,2})'
 # here im traning with new features, like states, mongodb, e.t.c.
 @bot.message_handler(commands=['start'])
 def start(message) -> None:
-	"""first handler for command /start. 
-	here im traning with new features, like states, mongodb, e.t.c."""
-	print(f"msg - {message}")
+	"""
+		first handler for command /start. 
+		here im traning with new features, like states, mongodb, e.t.c.
+	"""
+	#print(f"msg - {message}")
 	message.text = f"Привет. Я простой бот который может скачать\
 				твой любимый трек с youtube. Для того чтоб научиться мной\
 				пользоваться введи /help."
-	print(f"message - {message.from_user}") # TODO: delete this print. rewrite on normal loging.
+	#print(f"message - {message.from_user}") # TODO: delete this print. rewrite on normal loging.
 	# store first message in store.
 	store.save_data_in_store(message.from_user.username,
 				 {'chat_id': message.chat.id,
@@ -46,7 +48,9 @@ def start(message) -> None:
 
 @bot.message_handler(commands=['help'])
 def helper(message) -> None:
-	"""second handler for command /help. he's like /start"""
+	"""
+		second handler for command /help. he's like /start
+	"""
 	message.text = f"На самом деле все очень просто пока что. Надо всего лишь\
 		....отправить мне ссылку на видео из которого ты хочешь достать\
 		аудиодорожку и ждать) да, пока что сервис работает не очень\
@@ -63,8 +67,10 @@ def helper(message) -> None:
 # don't work with out url
 @bot.message_handler(commands=['dw'])
 def download(message) -> None:
-	""" thrid handler for command /dw [url]
-    set three buttons in answer on command.don't work with out url"""
+	"""
+		thrid handler for command /dw [url]
+    	set three buttons in answer on command.don't work with out url
+	"""
 	# generate keyboard 
 	keyboard = types.InlineKeyboardMarkup()
 	# first button setup download full audio from url.
@@ -88,7 +94,9 @@ def download(message) -> None:
 
 @bot.callback_query_handler(func=lambda call: True)
 def callback_handler(call) -> None:
-	"""fourth handler handle callback events from buttons."""
+	"""
+		fourth handler handle callback events from buttons.
+	"""
 	# if have message from callback
 	if call.message:
 		# and data is cancel
@@ -119,12 +127,14 @@ def callback_handler(call) -> None:
 
 @bot.message_handler(content_types=["text"])
 def get_music(message) -> None:
-	""" fifth handler for text
-		here we have two options
-	    	- only url -> download full audio with out another question to user.
-	    	- setup timecodes -> if user use command /dw, we stored him url in state
-	           and we need download part of audio.
-		most complicated part of bot."""
+	""" 
+		fifth handler for text
+			here we have two options
+				- only url -> download full audio with out another question to user.
+				- setup timecodes -> if user use command /dw, we stored him url in state
+				and we need download part of audio.
+		most complicated part of bot.
+	"""
 	# init list with timecodes.
 	times = []
 	# validate message on url.
@@ -176,7 +186,9 @@ def get_music(message) -> None:
 		bot.send_message(message.chat.id, f"don't understand u")
 
 def download_music(message, url, start=None, finish=None) -> None:
-	"""main method for downlad audio."""
+	"""
+		main method for downlad audio.
+	"""
 	url_for_download = url[0]
 	if start and finish is not None:
 		#don't check db.
@@ -237,8 +249,10 @@ def download_music(message, url, start=None, finish=None) -> None:
 				eng.remove_file(chunk)
 
 def validate_time(time) -> int:
-	""" helper for validate time. split string by dot, 
-	summ mun and sec. return sec"""
+	"""
+		helper for validate time. split string by dot, 
+		summ mun and sec. return sec
+	"""
 	if time.find('.') == -1:
 		return int(time)
 	else:
