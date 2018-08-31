@@ -13,13 +13,16 @@ from database import SQLighter
 from dbmongo import DBProvider
 
 # bot object - core for this bot.
+print(f"init bot")
 bot = telebot.TeleBot(bot_token)
 # now here sqlite
+print(f"init mongo")
 provider = DBProvider("mongo", 27017, "test-base")
 db = SQLighter(database_name)
 # used redis_json for save states
 # need this, coz bot down after timeout.
 # TODO: write worker for work with states after bot fall.
+print(f"init redis")
 store = StoreController(rejson_host, rejson_port)
 # two regex for validate youtube urls, and timecode.
 valid_url = r'https://www.youtube.com/watch\?v\=[0-9A-Za-z\_\-]{11}|https://youtu.be/[0-9A-Za-z\_\-]{11}'
