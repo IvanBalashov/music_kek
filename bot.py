@@ -31,6 +31,7 @@ start_fin = r'(\d{1,2}\.\d{1,2}|\d{1,2})\s(\d{1,2}\.\d{1,2}|\d{1,2})'
 def start(message) -> None:
 	"""first handler for command /start. 
 	here im traning with new features, like states, mongodb, e.t.c."""
+	print(f"msg - {message}")
 	message.text = f"Привет. Я простой бот который может скачать\
 				твой любимый трек с youtube. Для того чтоб научиться мной\
 				пользоваться введи /help."
