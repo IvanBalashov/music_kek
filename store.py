@@ -5,6 +5,7 @@ class StoreController(object):
 
 	def __init__(self, my_host, my_port):
 		#pool = redis.ConnectionPool(host=my_host, port=my_port, db=0)
+		print(f"connect to redis")
 		self.red = redis.Redis(host=my_host, port=my_port, db=0)
 		try:
 			info = self.red.execute_command('PING')

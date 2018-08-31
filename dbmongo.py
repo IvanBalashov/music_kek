@@ -15,6 +15,7 @@ class DBProvider(object):
 			self.client = MongoClient(my_host, port)
 		except Exception:
 			raise Exception(f"client can't connect to mongodb.")
+		print(f"connected to MongoDB")
 		self.db = self.client[data_base]
 		self.files = self.db.files
 		self.users = self.db.users
