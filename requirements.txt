@@ -1,4 +1,4 @@
-youtube_dl==2017.12.2
+youtube_dl==2018.9.8
 pytelegrambotapi==2.2.3
 redis==2.10.6
 pymongo==3.7.1

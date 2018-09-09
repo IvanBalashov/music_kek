@@ -23,6 +23,7 @@ services:
     volumes:
       - '/home/music/music_kek/data/:/root/music_kek/data/'
     hostname: bot
+    restart: unless-stopped
 
 networks:
   outside:
