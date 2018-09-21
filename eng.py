@@ -11,10 +11,10 @@ def download_by_link(link: str, videoid: str) -> [str, str]:
 	"""This method is setup youtube_dl for downlad video"""
 	# set youtube_dl arguments 
 	ydl_opts = {
-		'quiet': True, # don't write in output
+		'quiet': False, # don't write in output
 		'no_warnings': True, # write warnings in output
 		'format': "bestaudio/best", # download best audio quality
-		'format': 'webm', # setup format webm
+		'format': 'mp4', # setup format webm
 		'outtmpl': '%(name)s' + str(videoid) + '.%(ext)s', # setup output name 
 		'postprocessor': [{ # dk how this need work, but if this not setup audio didn't download
 			'key': "FFmpegExtractAudioPP",
@@ -49,7 +49,7 @@ def translate(inp: str) -> str:
 def convert_to_mp3(filename: str, title: str, start: int=None, end: int=None) -> list:
 	"""core func for encode webm files to mp3"""
 	# setup args for ffmpeg
-	file_a = f"{path_to_wrk_dir}{filename}.webm" # input file
+	file_a = f"{path_to_wrk_dir}{filename}.mp4" # input file
 	file_b = f"{path_to_wrk_dir}{title}.mp3" # output file
 	files_b = [] # this list need if file more than 30 mb
 	args = [
@@ -76,7 +76,7 @@ def convert_to_mp3(filename: str, title: str, start: int=None, end: int=None) ->
 		"320k", # setup max bitrate
 		file_b,
 		]
-	
+	print(f"{args}")
 	# start subprocess for encoding
 	popen = subprocess.Popen(args)
 	popen.wait()
