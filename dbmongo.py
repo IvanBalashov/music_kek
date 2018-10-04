@@ -71,9 +71,17 @@ class DBProvider(object):
 	def update_file_in_db(self, f_name, data):
 		if f_name is None:
 			raise Exception(f"empty f_name")
-		self.files.update_one({"file_name":f_name}, {"$set": data}, upsert=True)
+		result = self.files.update_one({"file_name":f_name}, {"$set": data}, upsert=True)
+		if result["acknowledged"]:
+			print(f"result update_file_in_db - {result}")
+		else:
+			print(f"can't update this obj")
 
 	def update_user_in_db(self, u_id, data):
 		if u_id is None:
 			raise Exception(f"empty u_name")
-		self.files.update_one({"u_id":u_id}, {"$set": data}, upsert=True)
+		result = self.files.update_one({"u_id":u_id}, {"$set": data}, upsert=True)
+		if result["acknowledged"]:
+			print(f"result update_user_in_db - {result}")
+		else:
+			print(f"can't update this obj")
