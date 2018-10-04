@@ -46,6 +46,9 @@ def start(message) -> None:
 				 {'chat_id': message.chat.id,
 				  'u_id': message.from_user.id,
 				  'data': message.text})
+
+	if provider.find_user_in_db(message.from_user.id) is None:
+		provider.insert_user_in_db({'user_name': message.from_user.username, 'u_id' :message.from_user.id, 'files': []})
 	# send msg in chat.
 	bot.send_message(message.chat.id, message.text)
 
@@ -63,8 +66,9 @@ def helper(message) -> None:
 				 {'chat_id': message.chat.id,
 				  'u_id': message.from_user.id,
 				  'data': message.text})
-	provider.insert_user_in_db({'u_id' :message.from_user.id, 'files': []})
-	print(message)
+
+	if provider.find_user_in_db(message.from_user.id) is None:
+		provider.insert_user_in_db({'u_id' :message.from_user.id, 'files': []})
 	bot.send_message(message.chat.id, message.text)
 
 # thrid handler for command /dw [url]
@@ -95,6 +99,9 @@ def download(message) -> None:
 				 {'chat_id': message.chat.id,
 				  'u_id': message.from_user.id,
 				  'data': message.text})
+
+	if provider.find_user_in_db(message.from_user.id) is None:
+		provider.insert_user_in_db({'u_id' :message.from_user.id, 'files': []})
 	bot.send_message(message.chat.id, f"Which type of download u want?", reply_markup=keyboard)
 
 @bot.callback_query_handler(func=lambda call: True)
@@ -195,12 +202,18 @@ def download_music(message, url, start=None, finish=None) -> None:
 		main method for downlad audio.
 	"""
 	url_for_download = url[0]
-	if start and finish is not None:
+	file = provider.find_file_in_db(url_for_download)
+	list_of_files = []
+	if start and finish is None:
 		#don't check db.
 		print(f"raz dva tri")
-	if db.check_exist_file(url_for_download):
-		fileid = db.select_by_url(url_for_download)
-		bot.send_audio(message.chat.id, fileid[0], None, timeout = 5)
+	if file is not None:
+		msg = bot.send_message(message.chat.id, f"i'm know this song, w8 plz a bit...")
+		if len(file['files']) == 1:
+			bot.send_audio(message.chat.id, file['files'][0], None, timeout = 5)
+		else:
+			for f in file['files']:
+				bot.send_audio(message.chat.id, f, None, timeout = 5)
 	else:
 		# need save msg obj for progress_bar
 		user_msg = bot.send_message(message.chat.id, f"0%")
@@ -226,7 +239,7 @@ def download_music(message, url, start=None, finish=None) -> None:
 				# request about end downloading on telegram server and sending file
 				bot.edit_message_text(f"100%", chat_id=message.chat.id, message_id=user_msg.message_id)
 				# TODO: rewrite on mongodb
-				db.add_file(file_id=msg.audio.file_id, file_name=path, url=url)
+				list_of_files.append(msg.audio.file_id)
 			# handle exceptions
 			except Exception as e:
 				# request user about problems
@@ -246,12 +259,13 @@ def download_music(message, url, start=None, finish=None) -> None:
 				try:
 					msg = bot.send_audio(message.chat.id, file, None, timeout = 60)
 					bot.edit_message_text(f"100%", chat_id=message.chat.id, message_id=user_msg.message_id)
-					db.add_file(file_id=msg.audio.file_id, file_name=path, url=url)
+					list_of_files.append(msg.audio.file_id)
 				except Exception as e:
 					bot.edit_message_text(f"TimeOut {e}", chat_id=message.chat.id, message_id=user_msg.message_id)
 					pass
 				# remove all files from server
 				eng.remove_file(chunk)
+		provider.insert_file_in_db({'file_name': "123", 'downloaded_url': url_for_download, 'files': list_of_files})
 
 def validate_time(time) -> int:
 	"""

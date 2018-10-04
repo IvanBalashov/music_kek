@@ -42,11 +42,11 @@ class DBProvider(object):
 			finded_file = self.files.find_one({"downloaded_url":d_url})
 			return finded_file
 
-	def find_user_in_db(self, u_name):
-		if u_name is None:
-			raise Exception(f"empty u_name")
+	def find_user_in_db(self, u_id):
+		if u_id is None:
+			raise Exception(f"empty u_id")
 		else:
-			finded_user = self.users.find_one({"user_name":u_name})
+			finded_user = self.users.find_one({'u_id': u_id})
 			return finded_user
 	
 	#think about delete_one or delete_many
@@ -59,10 +59,10 @@ class DBProvider(object):
 		else:
 			print(f"can't delete this obj")
 
-	def delete_user_in_db(self, u_name):
-		if u_name is None:
+	def delete_user_in_db(self, u_id):
+		if u_id is None:
 			raise Exception(f"empty f_name")
-		result = self.files.delete_one({"user_name":u_name})
+		result = self.files.delete_one({"u_id":u_id})
 		if result["acknowledged"]:
 			print(f"result delete_user_in_db - {result}")
 		else:
@@ -73,7 +73,7 @@ class DBProvider(object):
 			raise Exception(f"empty f_name")
 		self.files.update_one({"file_name":f_name}, {"$set": data}, upsert=True)
 
-	def update_user_in_db(self, u_name, data):
-		if u_name is None:
+	def update_user_in_db(self, u_id, data):
+		if u_id is None:
 			raise Exception(f"empty u_name")
-		self.files.update_one({"user_name":u_name}, {"$set": data}, upsert=True)
+		self.files.update_one({"u_id":u_id}, {"$set": data}, upsert=True)
