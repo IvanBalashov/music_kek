@@ -68,7 +68,7 @@ def helper(message) -> None:
 				  'data': message.text})
 
 	if provider.find_user_in_db(message.from_user.id) is None:
-		provider.insert_user_in_db({'u_id' :message.from_user.id, 'files': []})
+		provider.insert_user_in_db({'user_name': message.from_user.username, 'u_id' :message.from_user.id, 'files': []})
 	bot.send_message(message.chat.id, message.text)
 
 # thrid handler for command /dw [url]
@@ -265,7 +265,17 @@ def download_music(message, url, start=None, finish=None) -> None:
 					pass
 				# remove all files from server
 				eng.remove_file(chunk)
-		provider.insert_file_in_db({'file_name': "123", 'downloaded_url': url_for_download, 'files': list_of_files})
+		# save file in mongodb, need save url and list of files for big files
+		file_id = provider.insert_file_in_db({'file_name': title, 'downloaded_url': url_for_download, 'files': list_of_files})
+		# save info about files in user fields TODO: add llast 10 downloaded files.
+		user = provider.find_user_in_db(message.from_user.id)
+		# if user don't exist in mongo, need add him.
+		if user is None:
+			provider.insert_user_in_db({'user_name': message.from_user.username, 'u_id' :message.from_user.id, 'files': [file_id]})
+		else:
+			files_list = user['files']
+			files_list.append(file_id)
+			provider.update_user_in_db(message.from_user.id, {'files': [files_list]})
 
 def validate_time(time) -> int:
 	"""
