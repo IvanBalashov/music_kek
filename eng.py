@@ -127,6 +127,7 @@ def convert_to_mp3(filename: str, title: str, start: int=None, end: int=None) ->
 			except Exception as e:
 				print(f"Exception - {e}")
 			files_b.append(f"{path_to_wrk_dir}{title}_{chunk_start_time}.mp3") # append name of file in list
+		remove(file_b)
 	try:
 		# remove tmp file
 		remove(file_a)
