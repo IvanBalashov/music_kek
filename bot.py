@@ -21,7 +21,7 @@ provider = DBProvider("mongo", 27017, "test-base")
 db = SQLighter(database_name)
 # used redis_json for save states
 # need this, coz bot down after timeout.
-# TODO: write worker for work with states after bot fall.
+# TODO: write worker for loading states in to bot after bot fall.
 print(f"init redis")
 store = StoreController(rejson_host, rejson_port)
 # two regex for validate youtube urls, and timecode.
@@ -63,6 +63,8 @@ def helper(message) -> None:
 				 {'chat_id': message.chat.id,
 				  'u_id': message.from_user.id,
 				  'data': message.text})
+	provider.insert_user_in_db({'u_id' :message.from_user.id, 'files': []})
+	print(message)
 	bot.send_message(message.chat.id, message.text)
 
 # thrid handler for command /dw [url]
