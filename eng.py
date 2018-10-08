@@ -38,8 +38,8 @@ def translate(inp: str) -> str:
 	"""This is strange method for retranslate cirylic symbols in latin.
 	   Stolen from stackoverflow)."""
 	# list for encdoe cirylic symbols in latinc.
-	symbols = (u"абвгдеёжзийклмнопрстуфхцчшщъыьэюяАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ",
-			u"abvgdeejzijklmnoprstufhzcss_y_euaABVGDEEJZIJKLMNOPRSTUFHZCSS_Y_EUA")
+	symbols = (u"абвгдеёжзийклмнопрстуфхцчшщъыьэюяАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯöÖåÅ",
+			u"abvgdeejzijklmnoprstufhzcss_y_euaABVGDEEJZIJKLMNOPRSTUFHZCSS_Y_EUAoOaA")
 	# generate dict like {"a":"a","б":"",...}
 	tr = {ord(a):ord(b) for a, b in zip(*symbols)}
 	# switch all symbols
