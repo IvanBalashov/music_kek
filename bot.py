@@ -204,9 +204,6 @@ def download_music(message, url, start=None, finish=None) -> None:
 	url_for_download = url[0]
 	file = provider.find_file_in_db(url_for_download)
 	list_of_files = []
-	if start and finish is None:
-		#don't check db.
-		print(f"raz dva tri")
 	if file is not None:
 		msg = bot.send_message(message.chat.id, f"i'm know this song, w8 plz a bit...")
 		if len(file['files']) == 1:
@@ -266,16 +263,17 @@ def download_music(message, url, start=None, finish=None) -> None:
 				# remove all files from server
 				eng.remove_file(chunk)
 		# save file in mongodb, need save url and list of files for big files
-		file_id = provider.insert_file_in_db({'file_name': title, 'downloaded_url': url_for_download, 'files': list_of_files})
+		if start and finish is None:
+			file_id = provider.insert_file_in_db({'file_name': title, 'downloaded_url': url_for_download, 'files': list_of_files})
 		# save info about files in user fields TODO: add llast 10 downloaded files.
-		user = provider.find_user_in_db(message.from_user.id)
-		# if user don't exist in mongo, need add him.
-		if user is None:
-			provider.insert_user_in_db({'user_name': message.from_user.username, 'u_id' :message.from_user.id, 'files': [file_id]})
-		else:
-			files_list = user['files']
-			files_list.append(file_id)
-			provider.update_user_in_db(message.from_user.id, {'files': [files_list]})
+			user = provider.find_user_in_db(message.from_user.id)
+			# if user don't exist in mongo, need add him.
+			if user is None:
+				provider.insert_user_in_db({'user_name': message.from_user.username, 'u_id' :message.from_user.id, 'files': [file_id]})
+			else:
+				files_list = user['files']
+				files_list.append(file_id)
+				provider.update_user_in_db(message.from_user.id, {'files': [files_list]})
 
 def validate_time(time) -> int:
 	"""
