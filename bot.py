@@ -202,7 +202,10 @@ def download_music(message, url, start=None, finish=None) -> None:
 		main method for downlad audio.
 	"""
 	url_for_download = url[0]
-	file = provider.find_file_in_db(url_for_download)
+	if start and finish is None:
+		file = provider.find_file_in_db(url_for_download)
+	else:
+		file = None
 	list_of_files = []
 	if file is not None:
 		msg = bot.send_message(message.chat.id, f"i'm know this song, w8 plz a bit...")
