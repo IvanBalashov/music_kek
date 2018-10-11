@@ -202,7 +202,7 @@ def download_music(message, url, start=None, finish=None) -> None:
 		main method for downlad audio.
 	"""
 	url_for_download = url[0]
-	if start and finish is None:
+	if (start and finish) is None:
 		file = provider.find_file_in_db(url_for_download)
 	else:
 		file = None
@@ -266,17 +266,20 @@ def download_music(message, url, start=None, finish=None) -> None:
 				# remove all files from server
 				eng.remove_file(chunk)
 		# save file in mongodb, need save url and list of files for big files
-		if start and finish is None:
+		if (start and finish) is None:
+			print(f"save file in db")
 			file_id = provider.insert_file_in_db({'file_name': title, 'downloaded_url': url_for_download, 'files': list_of_files})
-		# save info about files in user fields TODO: add llast 10 downloaded files.
+			# save info about files in user fields TODO: add llast 10 downloaded files.
 			user = provider.find_user_in_db(message.from_user.id)
 			# if user don't exist in mongo, need add him.
+			print(f"user - {user}")
 			if user is None:
 				provider.insert_user_in_db({'user_name': message.from_user.username, 'u_id' :message.from_user.id, 'files': [file_id]})
 			else:
 				files_list = user['files']
-				files_list.append(file_id)
-				provider.update_user_in_db(message.from_user.id, {'files': [files_list]})
+				files_list.append(list_of_files)
+				print(f"files list is {files_list}")
+				provider.update_user_in_db(message.from_user.id, {'files': files_list})
 
 def validate_time(time) -> int:
 	"""
