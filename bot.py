@@ -1,7 +1,7 @@
 import telebot
 import time
 import re
-import eng
+import src.eng
 from os.path import getsize
 from data.config import bot_token
 from data.config import database_name
