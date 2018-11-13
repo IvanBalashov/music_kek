@@ -31,7 +31,6 @@ def download_by_link(link: str, videoid: str) -> [str, str]:
 	title = re.sub(r'[^\w]', ' ', title)
 	title = translate(title)
 	title = title.replace(' ', '_')
-	# return tmp_name and title
 	return fake_name, title
 
 def translate(inp: str) -> str:

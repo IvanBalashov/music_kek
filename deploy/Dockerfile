@@ -19,8 +19,6 @@ RUN apt-get install -y git ffmpeg wget \
 && pip3.6 install -r /root/music_kek/deploy/requirements.txt
 
 COPY entry-point.sh /root/music_kek/
-#RUN mkdir /root/music_kek/data
-#RUN touch /root/music_kek/data/__init__.py
 #EXPOSE 8082
-ENTRYPOINT ["/bin/bash","/root/music_kek/deploy/entry-point.sh"]
+ENTRYPOINT ["/bin/bash","/root/music_kek/entry-point.sh"]
 
