@@ -6,11 +6,9 @@ RUN apt-get update -y && apt-get upgrade -y
 RUN apt-get install -y make build-essential libssl-dev zlib1g-dev \
 && apt-get install -y libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm \
 && apt-get install -y libncurses5-dev  libncursesw5-dev xz-utils tk-dev
-RUN wget https://www.python.org/ftp/python/3.6.4/Python-3.6.4.tgz
-RUN tar xvf Python-3.6.4.tgz
-RUN cd Python-3.6.4 && ./configure --enable-optimizations
-RUN cd Python-3.6.4 && make -j8 
-RUN cd Python-3.6.4 && make altinstall
+RUN echo "deb http://ftp.de.debian.org/debian testing main" > /etc/apt/sources.list \
+&& echo 'APT::Default-Release "stable";' | sudo tee -a /etc/apt/apt.conf.d/00local \
+&& apt-get update && apt-get -t testing install -y python3.6
 RUN apt-get install -y git ffmpeg wget \
 && wget https://bootstrap.pypa.io/get-pip.py && python3.6 get-pip.py \
 && cd /root/ \
