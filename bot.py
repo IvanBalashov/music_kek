@@ -7,9 +7,9 @@ from data.config import bot_token
 from data.config import database_name
 from data.config import rejson_host
 from data.config import rejson_port
-from src.telebot import types
 from src.store import StoreController
 from src.dbmongo import DBProvider
+from telebot import types
 
 # bot object - core for this bot.
 print(f"init bot")
