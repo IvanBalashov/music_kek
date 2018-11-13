@@ -16,11 +16,11 @@ RUN apt-get install -y git ffmpeg wget \
 && cd /root/ \
 && git clone https://github.com/IvanBalashov/music_kek \
 && pip3.6 install virtualenv virtualenvwrapper \
-&& pip3.6 install -r /root/music_kek/requirements.txt
+&& pip3.6 install -r /root/music_kek/deploy/requirements.txt
 
 COPY entry-point.sh /root/music_kek/
 #RUN mkdir /root/music_kek/data
 #RUN touch /root/music_kek/data/__init__.py
 #EXPOSE 8082
-ENTRYPOINT ["/bin/bash","/root/music_kek/entry-point.sh"]
+ENTRYPOINT ["/bin/bash","/root/music_kek/deploy/entry-point.sh"]
 
