@@ -1,15 +1,15 @@
 import telebot
 import time
 import re
-import src.eng
+import src.eng as eng
 from os.path import getsize
 from data.config import bot_token
 from data.config import database_name
 from data.config import rejson_host
 from data.config import rejson_port
+from telebot import types
 from src.store import StoreController
 from src.dbmongo import DBProvider
-from telebot import types
 
 # bot object - core for this bot.
 print(f"init bot")
@@ -125,15 +125,14 @@ def callback_handler(call) -> None:
 			bot.send_message(call.message.chat.id, f"Enter start and finish.(Two numbers, like \"0\" \"1.50\")")
 			return
 		# if set full, we get url and download audio with out time codes
-		elif call.data.find("full") != -1:
-			if len(url) != 0:
-				# send "ok" message
-				bot.send_message(call.message.chat.id, "ok")
-				# start download
-				download_music(call.message, url, None, None)
-				# delete data from state
-				store.delete_data_in_store(call.message.from_user.username)
-				time.sleep(3)
+		elif call.data.find("full") != -1 and len(url) != 0:
+			# send "ok" message
+			bot.send_message(call.message.chat.id, "ok")
+			# start download
+			download_music(call.message, url, None, None)
+			# delete data from state
+			store.delete_data_in_store(call.message.from_user.username)
+			time.sleep(3)
 
 @bot.message_handler(content_types=["text"])
 def get_music(message) -> None:
@@ -200,84 +199,56 @@ def download_music(message, url, start=None, finish=None) -> None:
 		main method for downlad audio.
 	"""
 	url_for_download = url[0]
+	file = None
+	list_of_files = []
 	if (start and finish) is None:
 		file = provider.find_file_in_db(url_for_download)
-	else:
-		file = None
-	list_of_files = []
+		return
 	if file is not None:
 		msg = bot.send_message(message.chat.id, f"i'm know this song, w8 plz a bit...")
-		if len(file['files']) == 1:
-			bot.send_audio(message.chat.id, file['files'][0], None, timeout = 5)
-		else:
+		if len(file['files']) > 0:
 			for f in file['files']:
 				bot.send_audio(message.chat.id, f, None, timeout = 5)
-	else:
-		# need save msg obj for progress_bar
-		user_msg = bot.send_message(message.chat.id, f"0%")
-		# start download and request user about start downloading
-		bot.edit_message_text(f"25%", chat_id=message.chat.id, message_id=user_msg.message_id)
-		# try to fix bug with 
-		rand_name = message.chat.id + message.message_id
-		# download audio and safe title, and tmp_name of file
-		tmp_file, title = eng.download_by_link(url_for_download, rand_name)
-		# request user about start encoding
-		bot.edit_message_text(f"50%", chat_id=message.chat.id, message_id=user_msg.message_id)
-		# start comvert file same file names
-		path = eng.convert_to_mp3(tmp_file, title, start, finish)
-		# check variable path, if len more than 1, start loop for pull all files
-		if len(path) == 1:
-			# open file for send
-			file = open(path[0], 'rb')
-			# request user about end encoding, and start download file in to telegram
-			bot.edit_message_text(f"75%", chat_id=message.chat.id, message_id=user_msg.message_id)
-			try:
-				# try send file to user
-				msg = bot.send_audio(message.chat.id, file, None, timeout = 60)
-				# request about end downloading on telegram server and sending file
-				bot.edit_message_text(f"100%", chat_id=message.chat.id, message_id=user_msg.message_id)
-				# TODO: rewrite on mongodb
-				list_of_files.append(msg.audio.file_id)
-			# handle exceptions
-			except Exception as e:
-				# request user about problems
-				bot.edit_message_text(f"TimeOut {e}", chat_id=message.chat.id, message_id=user_msg.message_id)
-				pass
-			# remove file from server
-			eng.remove_file(path[0])
-		# if list have len more than 1, need loop for request all files
+			return
+	# need save msg obj for progress_bar
+	user_msg = bot.send_message(message.chat.id, f"0%")
+	# start download and request user about start downloading
+	bot.edit_message_text(f"25%", chat_id=message.chat.id, message_id=user_msg.message_id)
+	# try to fix bug with 
+	rand_name = message.chat.id + message.message_id
+	# download audio and safe title, and tmp_name of file
+	tmp_file, title = eng.download_by_link(url_for_download, rand_name)
+	# request user about start encoding
+	bot.edit_message_text(f"50%", chat_id=message.chat.id, message_id=user_msg.message_id)
+	# start comvert file same file names
+	path = eng.convert_to_mp3(tmp_file, title, start, finish)
+	for chunk in reversed(path):
+		# all steps like for one file
+		file = open(chunk, 'rb')
+		bot.edit_message_text(f"75%", chat_id=message.chat.id, message_id=user_msg.message_id)
+		try:
+			msg = bot.send_audio(message.chat.id, file, None, timeout = 60)
+			bot.edit_message_text(f"100%", chat_id=message.chat.id, message_id=user_msg.message_id)
+			list_of_files.append(msg.audio.file_id)
+		except Exception as e:
+			bot.edit_message_text(f"TimeOut {e}", chat_id=message.chat.id, message_id=user_msg.message_id)
+		# remove all files from server
+		eng.remove_file(chunk)
+	# save file in mongodb, need save url and list of files for big files
+	if (start and finish) is None:
+		print(f"save file in db")
+		file_id = provider.insert_file_in_db({'file_name': title, 'downloaded_url': url_for_download, 'files': list_of_files})
+		# save info about files in user fields TODO: add llast 10 downloaded files.
+		user = provider.find_user_in_db(message.from_user.id)
+		# if user don't exist in mongo, need add him.
+		print(f"user - {user}")
+		if user is None:
+			provider.insert_user_in_db({'user_name': message.from_user.username, 'u_id' :message.from_user.id, 'files': [file_id]})
 		else:
-			# start reverse loop
-			# this r_loop need, coz files plays from bot to top
-			# more comfy for final users.
-			for chunk in reversed(path):
-				# all steps like for one file
-				file = open(chunk, 'rb')
-				bot.edit_message_text(f"75%", chat_id=message.chat.id, message_id=user_msg.message_id)
-				try:
-					msg = bot.send_audio(message.chat.id, file, None, timeout = 60)
-					bot.edit_message_text(f"100%", chat_id=message.chat.id, message_id=user_msg.message_id)
-					list_of_files.append(msg.audio.file_id)
-				except Exception as e:
-					bot.edit_message_text(f"TimeOut {e}", chat_id=message.chat.id, message_id=user_msg.message_id)
-					pass
-				# remove all files from server
-				eng.remove_file(chunk)
-		# save file in mongodb, need save url and list of files for big files
-		if (start and finish) is None:
-			print(f"save file in db")
-			file_id = provider.insert_file_in_db({'file_name': title, 'downloaded_url': url_for_download, 'files': list_of_files})
-			# save info about files in user fields TODO: add llast 10 downloaded files.
-			user = provider.find_user_in_db(message.from_user.id)
-			# if user don't exist in mongo, need add him.
-			print(f"user - {user}")
-			if user is None:
-				provider.insert_user_in_db({'user_name': message.from_user.username, 'u_id' :message.from_user.id, 'files': [file_id]})
-			else:
-				files_list = user['files']
-				files_list.append(list_of_files)
-				print(f"files list is {files_list}")
-				provider.update_user_in_db(message.from_user.id, {'files': files_list})
+			files_list = user['files']
+			files_list.append(list_of_files)
+			print(f"files list is {files_list}")
+			provider.update_user_in_db(message.from_user.id, {'files': files_list})
 
 def validate_time(time) -> int:
 	"""
