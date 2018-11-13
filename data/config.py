@@ -1,3 +1,5 @@
 bot_token = "TOKEN"
 path_to_wrk_dir = "/root/music_kek/"
 database_name = "/root/music_kek/data/files.db"
+rejson_host = "localhost"
+rejson_port = "6379"

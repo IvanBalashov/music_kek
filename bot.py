@@ -7,10 +7,9 @@ from data.config import bot_token
 from data.config import database_name
 from data.config import rejson_host
 from data.config import rejson_port
-from telebot import types
-from store import StoreController
-from database import SQLighter
-from dbmongo import DBProvider
+from src.telebot import types
+from src.store import StoreController
+from src.dbmongo import DBProvider
 
 # bot object - core for this bot.
 print(f"init bot")
@@ -18,7 +17,6 @@ bot = telebot.TeleBot(bot_token)
 # now here sqlite
 print(f"init mongo")
 provider = DBProvider("mongo", 27017, "test-base")
-db = SQLighter(database_name)
 # used redis_json for save states
 # need this, coz bot down after timeout.
 # TODO: write worker for loading states in to bot after bot fall.
