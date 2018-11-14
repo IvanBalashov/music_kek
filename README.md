@@ -6,9 +6,9 @@ This bot can download audio from youtube link.
 
 * if u wana only download music.
 
-Find this bot in telegram [@MusicKekbot] and use command /start.
+Find this bot in telegram [@MusicKekbot](https://t.me/MusicKekbot) and use command /start.
 <br>Now u can download audio. Send url from youtube to bot, and he download it.
-<br>Now bot can load some part from video. Used command /dw [YouTube_url] and continue use the buttons.
+<br>Now bot can load some part from video. Used command /dw [YouTube_url](https://youtube.com/) and continue use the buttons.
 
 * if u wana use this bot for yourself.
 
