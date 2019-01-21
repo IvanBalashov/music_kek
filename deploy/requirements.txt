@@ -1,5 +1,5 @@
 youtube_dl
-pytelegrambotapi
+pyTelegramBotAPI
 redis==2.10.6
 pymongo==3.7.1
 
