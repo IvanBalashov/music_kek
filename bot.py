@@ -60,6 +60,7 @@ def helper(message) -> None:
 		аудиодорожку и ждать) да, пока что сервис работает не очень\
 		быстро, но в дальнейшем разработчик все поправит"
 	store.delete_data_in_store(message.from_user.username)
+	#grkgerkger
 	store.save_data_in_store(message.from_user.username,
 				 {'chat_id': message.chat.id,
 				  'u_id': message.from_user.id,

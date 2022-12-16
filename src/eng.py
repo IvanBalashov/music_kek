@@ -27,7 +27,6 @@ def download_by_link(link: str, videoid: str) -> [str, str]:
 	fake_name = "NA" + str(videoid)
 	# TODO: think about this query 
 	# refactoring title 
-	title = data.pop('title')
 	title = re.sub(r'[^\w]', ' ', title)
 	title = translate(title)
 	title = title.replace(' ', '_')
